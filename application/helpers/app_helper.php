@@ -42,8 +42,8 @@ function cek_tgl($tgl = null)
     if ($tgl != null || $tgl != '' || $tgl != '0000-00-00') {
         $t = date_create($tgl);
         $st = date_format($t, 'd/m/Y');
-        echo $st;
     } else {
-        echo '-';
+        $st = '-';
     }
+    return $st;
 }

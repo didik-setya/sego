@@ -12,7 +12,13 @@ return [
             'nama_menu' => 'Management Kamar',
             'icon' => '<i class="fas fa-hotel"></i>',
             'url' => 'kamar',
-            'access' => ['admin']
+            'access' => ['admin', 'user']
+        ],
+        [
+            'nama_menu' => 'Management Penghuni',
+            'icon' => '<i class="fas fa-users"></i>',
+            'url' => 'penghuni',
+            'access' => ['admin', 'user']
         ]
     ]
 ];

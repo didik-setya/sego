@@ -24,4 +24,17 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+    public function data_penghuni()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $data = [
+            'title' => 'Data Penghuni',
+            'view' => 'v/data_penghuni',
+            'kamar' => $this->db->where('status', 1)->get('kamar')->result(),
+            'data' => $this->app->get_all_data_pelanggan()->result()
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }

@@ -58,3 +58,7 @@ $route['actionlogin']['POST'] = 'login/validation_login';
 $route['kamar'] = 'dashboard/data_kamar';
 $route['validation_kamar']['POST'] = 'ajax/validation_kamar';
 $route['delete_kamar']['POST'] = 'ajax/delete_kamar';
+
+
+$route['penghuni'] = 'dashboard/data_penghuni';
+$route['action_data_penghuni']['POST'] = 'ajax/action_penghuni';
