@@ -8,7 +8,7 @@
             <button class="btn btn-sm btn-primary" onclick="add_data()"><i class="fa fa-plus"></i> Tambah Data Baru</button>
 
             <div class="card mt-3">
-                <div class="card-body">
+                <div class="card-body table-responsive">
                     <table class="table table-bordered table-sm" id="main_table">
                         <thead>
                             <tr class="bg-dark text-light">

@@ -37,4 +37,25 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+    public function payment()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $id = $this->input->get('id');
+        $penghuni = $this->db->get_where('penghuni', ['md5(sha1(id))' => $id])->row();
+        if ($penghuni) {
+
+            $data = [
+                'title' => 'Data Pembayaran',
+                'view' => 'v/data_payment',
+                'penghuni' => $penghuni,
+                'data' => $this->db->get_where('pembayaran', ['id_penghuni' => $penghuni->id])->result()
+            ];
+
+            $this->load->view('dashboard', $data);
+        } else {
+            redirect('penghuni');
+        }
+    }
 }

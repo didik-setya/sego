@@ -62,3 +62,7 @@ $route['delete_kamar']['POST'] = 'ajax/delete_kamar';
 
 $route['penghuni'] = 'dashboard/data_penghuni';
 $route['action_data_penghuni']['POST'] = 'ajax/action_penghuni';
+
+$route['payment'] = 'dashboard/payment';
+$route['validation_payment']['POST'] = 'ajax/valid_payment';
+$route['delete_payment']['POST'] = 'ajax/delete_payment';

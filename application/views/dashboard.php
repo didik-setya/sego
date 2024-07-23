@@ -150,6 +150,7 @@ $role = $this->session->userdata('role');
         <i class="fas fa-angle-up"></i>
     </a>
 
+    <script src="<?= base_url('assets/') ?>mask/dist/jquery.mask.min.js"></script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="<?= base_url('assets/') ?>vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

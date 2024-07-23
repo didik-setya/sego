@@ -5,7 +5,7 @@
             <button class="btn btn-sm btn-success" onclick="add_data()"><i class="fa fa-plus"></i> Tambah Data</button>
 
             <div class="card mt-3">
-                <div class="card-body">
+                <div class="card-body table-responsive">
 
                     <table class="table table-sm table-bordered w-100" id="main_table">
                         <thead>
@@ -55,7 +55,7 @@
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->id_kamar ?>', '<?= $d->nama_penghuni ?>', '<?= $d->status ?>')"><i class="fa fa-edit"></i> Edit</a>
                                                 <a class="dropdown-item" href="#" onclick="delete_penghuni('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
-                                                <a class="dropdown-item" href="<?= base_url('payment?id=' . $hash_id) ?>" target="_blank"><i class="fas fa-money-bill-wave"></i> Pembayaran</a>
+                                                <a class="dropdown-item" href="<?= base_url('payment?id=' . $hash_id) ?>"><i class="fas fa-money-bill-wave"></i> Pembayaran</a>
                                             </div>
                                         </div>
                                     </td>

@@ -301,6 +301,118 @@ class Ajax extends CI_Controller
                 break;
         }
     }
-
     //end data penghuni
+
+
+    //ajax pembayaran
+    public function valid_payment()
+    {
+        cek_ajax();
+        $this->form_validation->set_rules('jumlah', 'Jumlah pembayaran', 'required|trim|numeric');
+        $this->form_validation->set_rules('via', 'Via pembayaran', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $params = [
+                'type' => 'validation',
+                'err_jumlah' => form_error('jumlah'),
+                'err_via' => form_error('via'),
+                'token' => $this->security->get_csrf_hash()
+            ];
+            echo json_encode($params);
+            die;
+        } else {
+            $this->act_payment();
+        }
+    }
+
+    private function act_payment()
+    {
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $act = $post['act'];
+
+        switch ($act) {
+            case 'add':
+
+                $data = [
+                    'id_penghuni' => $post['penghuni'],
+                    'periode' => $post['periode'],
+                    'tgl_bayar' => $post['tgl'],
+                    'jml_bayar' => $post['jumlah'],
+                    'via_pembayaran' => $post['via'],
+                    'ket' => $post['ket']
+                ];
+                $this->db->insert('pembayaran', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'Pembayaran berhasil di tambahkan'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'Pembayaran gagal di tambahkan'
+                    ];
+                }
+                $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
+                $output = array_merge($arr_token, $params);
+
+                echo json_encode($output);
+                die;
+                break;
+            case 'edit':
+
+                $data = [
+                    'periode' => $post['periode'],
+                    'tgl_bayar' => $post['tgl'],
+                    'jml_bayar' => $post['jumlah'],
+                    'via_pembayaran' => $post['via'],
+                    'ket' => $post['ket']
+                ];
+                $this->db->where('id', $id)->update('pembayaran', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'Pembayaran berhasil di edit'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'Pembayaran gagal di edit'
+                    ];
+                }
+                $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
+                $output = array_merge($arr_token, $params);
+
+                echo json_encode($output);
+
+                die;
+                break;
+        }
+    }
+
+    public function delete_payment()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+
+        $this->db->where('id', $id)->delete('pembayaran');
+        if ($this->db->affected_rows() > 0) {
+            $params = [
+                'status' => true,
+                'msg' => 'Pembayaran berhasil di hapus'
+            ];
+        } else {
+            $params = [
+                'status' => false,
+                'msg' => 'Pembayaran gagal di hapus'
+            ];
+        }
+
+        $arr_token = ['token' => $this->security->get_csrf_hash()];
+        $output = array_merge($params, $arr_token);
+        echo json_encode($output);
+    }
+
+    //end ajax pembayaran
 }
