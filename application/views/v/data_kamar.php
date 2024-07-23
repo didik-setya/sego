@@ -15,7 +15,9 @@
                                 <th>#</th>
                                 <th>Kamar</th>
                                 <th>Kamar Mandi</th>
+                                <th>Harga</th>
                                 <th>Status</th>
+                                <th>Last Update</th>
                                 <th><i class="fa fa-cogs"></i></th>
                             </tr>
                         </thead>
@@ -29,6 +31,7 @@
                                     <td><?= $i++ ?></td>
                                     <td><?= $d->no_kamar ?></td>
                                     <td><?= $d->km ?></td>
+                                    <td>Rp. <?= number_format($d->price) ?></td>
                                     <td>
                                         <?php
                                         if ($d->status == 0) {
@@ -46,13 +49,14 @@
                                         }
                                         ?>
                                     </td>
+                                    <td><?= cek_tgl($d->last_update) ?></td>
                                     <td>
                                         <div class="btn-group dropleft">
                                             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                 <i class="fa fa-cogs"></i>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->no_kamar ?>', '<?= $d->km ?>', '<?= $d->status ?>')"><i class="fa fa-edit"></i> Edit</a>
+                                                <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->no_kamar ?>', '<?= $d->km ?>', '<?= $d->status ?>', '<?= $d->price ?>')"><i class="fa fa-edit"></i> Edit</a>
                                                 <a class="dropdown-item" href="#" onclick="delete_data('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
                                             </div>
                                         </div>
@@ -87,7 +91,7 @@
 
                 <div class="form-group">
                     <label><b>No Kamar</b></label>
-                    <input type="text" name="kamar" id="kamar" class="form-control">
+                    <input type="text" name="kamar" id="kamar" class="form-control" required>
                     <small class="text-danger" id="err_kamar"></small>
                 </div>
 
@@ -98,6 +102,12 @@
                         <option value="luar">Luar</option>
                         <option value="dalam">Dalam</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label><b>Harga Kamar</b></label>
+                    <input type="text" name="price" id="price" class="form-control" required>
+                    <small class="text-danger" id="err_price"></small>
                 </div>
 
 
@@ -130,11 +140,18 @@
             scrollX: true,
             ordering: false
         })
+
+        $('#price').on('keyup mouseup', () => {
+            $('#price').mask("#.##0", {
+                reverse: true
+            });
+        })
     })
 
     $('#form_kamar').submit(function(e) {
         e.preventDefault();
         loading()
+        $('#price').unmask();
         $.ajax({
             url: $(this).attr('action'),
             data: $(this).serialize(),
@@ -151,7 +168,14 @@
                         } else {
                             $('#err_kamar').html(d.err_kamar)
                         }
+
+                        if (d.err_price == '') {
+                            $('#err_price').html('')
+                        } else {
+                            $('#err_price').html(d.err_price)
+                        }
                     } else {
+                        $('#err_price').html('')
                         $('#err_kamar').html('')
                         if (d.status == false) {
                             error_alert(d.msg);
@@ -188,16 +212,19 @@
         $('#status').attr('disabled', true);
         $('#status').removeAttr('required')
         $('#err_kamar').html('')
+        $('#err_price').html('')
         $('#id_kamar').val('')
+        $('#price').val('')
     }
 
-    function edit_data(id, kamar, km, status) {
+    function edit_data(id, kamar, km, status, price) {
         $('#staticBackdrop').modal('show')
         $('#staticBackdrop').find('.modal-title').html('Edit Data Kamar')
         $('#act_kamar').val('edit')
 
         $('#kamar').val(kamar);
         $('#km').val(km);
+        $('#price').val(price)
         $('#status').val('');
 
         if (status == 1 || status == 4 || status == 0) {
@@ -211,6 +238,7 @@
         }
 
         $('#err_kamar').html('')
+        $('#err_price').html('')
         $('#id_kamar').val(id)
     }
 

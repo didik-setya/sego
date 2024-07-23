@@ -9,10 +9,12 @@ class Ajax extends CI_Controller
     {
         cek_ajax();
         $this->form_validation->set_rules('kamar', 'Kamar', 'required|trim');
+        $this->form_validation->set_rules('price', 'Harga Kamar', 'required|trim|numeric');
         if ($this->form_validation->run() == false) {
             $params = [
                 'type' => 'validation',
                 'err_kamar' => form_error('kamar'),
+                'err_price' => form_error('price'),
                 'token' => $this->security->get_csrf_hash()
             ];
             echo json_encode($params);
@@ -34,7 +36,8 @@ class Ajax extends CI_Controller
                     'no_kamar' => $this->input->post('kamar', true),
                     'km' => $this->input->post('km', true),
                     'status' => 1,
-                    'last_update' => date('Y-m-d H:i:s')
+                    'last_update' => date('Y-m-d H:i:s'),
+                    'price' => $this->input->post('price')
                 ];
                 $this->db->insert('kamar', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -65,12 +68,14 @@ class Ajax extends CI_Controller
                         'no_kamar' => $this->input->post('kamar', true),
                         'km' => $this->input->post('km', true),
                         'status' => $status,
+                        'price' => $this->input->post('price'),
                         'last_update' => date('Y-m-d H:i:s')
                     ];
                 } else {
                     $data = [
                         'no_kamar' => $this->input->post('kamar', true),
                         'km' => $this->input->post('km', true),
+                        'price' => $this->input->post('price'),
                         'last_update' => date('Y-m-d H:i:s')
                     ];
                 }
