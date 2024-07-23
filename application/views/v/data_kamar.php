@@ -229,10 +229,10 @@
 
         if (status == 1 || status == 4 || status == 0) {
             $('#status').attr('required', true);
-            $('#status').removeAttr('disabled');
+            $('#status').removeAttr('readonly');
             $('#status').val(status);
         } else {
-            $('#status').attr('disabled', true);
+            $('#status').attr('readonly', true);
             $('#status').removeAttr('required');
             $('#status').val('');
         }
