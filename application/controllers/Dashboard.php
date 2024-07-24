@@ -70,4 +70,16 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+    public function setoran()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $data = [
+            'title' => 'Data Setoran',
+            'view' => 'v/data_setoran',
+            'data' => $this->db->order_by('tanggal', 'DESC')->get('setoran')->result()
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }

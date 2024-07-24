@@ -528,4 +528,94 @@ class Ajax extends CI_Controller
     }
 
     //end ajax pengeluaran
+
+
+
+    //ajax setoran
+    public function valid_setor()
+    {
+        cek_ajax();
+        $this->form_validation->set_rules('nominal', 'Nominal', 'required|trim|numeric');
+        $this->form_validation->set_rules('ket', 'Keterangan', 'required|trim');
+        if ($this->form_validation->run() == false) {
+            $params = [
+                'type' => 'validation',
+                'err_nominal' => form_error('nominal'),
+                'err_ket' => form_error('ket'),
+                'token' => $this->security->get_csrf_hash()
+            ];
+            echo json_encode($params);
+            die;
+        } else {
+            $this->_setor();
+        }
+    }
+
+    private function _setor()
+    {
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $act = $post['act'];
+
+        switch ($act) {
+            case 'add':
+                $data = [
+                    'tanggal' => $post['date'],
+                    'ket' => $post['ket'],
+                    'nominal' => $post['nominal']
+                ];
+                $this->db->insert('setoran', $data);
+
+                if ($this->db->affected_rows() > 0) {
+                    $params = ['status' => true, 'msg' => 'Setoran berhasil di tambahkan'];
+                } else {
+                    $params = ['status' => false, 'msg' => 'Setoran gagal di tambahkan'];
+                }
+                $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+
+                break;
+            case 'edit':
+
+                $data = [
+                    'tanggal' => $post['date'],
+                    'ket' => $post['ket'],
+                    'nominal' => $post['nominal']
+                ];
+
+                $this->db->where('id', $id)->update('setoran', $data);
+
+                if ($this->db->affected_rows() > 0) {
+                    $params = ['status' => true, 'msg' => 'Setoran berhasil di update'];
+                } else {
+                    $params = ['status' => false, 'msg' => 'Setoran gagal di update'];
+                }
+                $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+
+                break;
+        }
+    }
+
+    public function delete_setor()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+        $this->db->where('id', $id)->delete('setoran');
+
+        if ($this->db->affected_rows() > 0) {
+            $params = ['status' => true, 'msg' => 'Setoran berhasil di hapus'];
+        } else {
+            $params = ['status' => false, 'msg' => 'Setoran gagal di hapus'];
+        }
+
+        $arr_token = ['token' => $this->security->get_csrf_hash()];
+        $output = array_merge($params, $arr_token);
+        echo json_encode($output);
+    }
+    //end ajax setoran
 }

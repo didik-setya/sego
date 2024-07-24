@@ -79,3 +79,9 @@ $route['delete_payment']['POST'] = 'ajax/delete_payment';
 $route['pengeluaran'] = 'dashboard/pengeluaran';
 $route['validation_pengeluaran']['POST'] = 'ajax/valid_pengeluaran';
 $route['delete_pengeluaran']['POST'] = 'ajax/delete_pengeluaran';
+
+
+
+$route['setoran'] = 'dashboard/setoran';
+$route['validation_setoran']['POST'] = 'ajax/valid_setor';
+$route['delete_setor']['POST'] = 'ajax/delete_setor';
