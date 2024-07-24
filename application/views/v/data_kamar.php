@@ -1,11 +1,16 @@
+<?php
+$role = $this->session->userdata('role');
+?>
 <div class="container-fluid">
     <h4 class="mb-4 text-gray-800">Data Kamar</h4>
 
     <div class="row">
         <div class="col-12">
 
+            <?php if ($role == 'admin') { ?>
+                <button class="btn btn-sm btn-primary" onclick="add_data()"><i class="fa fa-plus"></i> Tambah Data Baru</button>
+            <?php } ?>
 
-            <button class="btn btn-sm btn-primary" onclick="add_data()"><i class="fa fa-plus"></i> Tambah Data Baru</button>
 
             <div class="card mt-3">
                 <div class="card-body table-responsive">
@@ -51,15 +56,17 @@
                                     </td>
                                     <td><?= cek_tgl($d->last_update) ?></td>
                                     <td>
-                                        <div class="btn-group dropleft">
-                                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                <i class="fa fa-cogs"></i>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->no_kamar ?>', '<?= $d->km ?>', '<?= $d->status ?>', '<?= $d->price ?>')"><i class="fa fa-edit"></i> Edit</a>
-                                                <a class="dropdown-item" href="#" onclick="delete_data('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
+                                        <?php if ($role == 'admin') { ?>
+                                            <div class="btn-group dropleft">
+                                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-cogs"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->no_kamar ?>', '<?= $d->km ?>', '<?= $d->status ?>', '<?= $d->price ?>')"><i class="fa fa-edit"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" onclick="delete_data('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     </td>
                                 </tr>
 

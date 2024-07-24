@@ -1,9 +1,13 @@
+<?php
+$role = $this->session->userdata('role');
+?>
 <div class="container-fluid">
     <h4 class="mb-4 text-gray-800">Data Penghuni</h4>
     <div class="row">
         <div class="col-12">
-            <button class="btn btn-sm btn-success" onclick="add_data()"><i class="fa fa-plus"></i> Tambah Data</button>
-
+            <?php if ($role == 'admin') { ?>
+                <button class="btn btn-sm btn-success" onclick="add_data()"><i class="fa fa-plus"></i> Tambah Data</button>
+            <?php } ?>
             <div class="card mt-3">
                 <div class="card-body table-responsive">
 
@@ -53,8 +57,10 @@
                                                 <i class="fa fa-cogs"></i>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->id_kamar ?>', '<?= $d->nama_penghuni ?>', '<?= $d->status ?>')"><i class="fa fa-edit"></i> Edit</a>
-                                                <a class="dropdown-item" href="#" onclick="delete_penghuni('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
+                                                <?php if ($role == 'admin') { ?>
+                                                    <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->id_kamar ?>', '<?= $d->nama_penghuni ?>', '<?= $d->status ?>')"><i class="fa fa-edit"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" onclick="delete_penghuni('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
+                                                <?php } ?>
                                                 <a class="dropdown-item" href="<?= base_url('payment?id=' . $hash_id) ?>"><i class="fas fa-money-bill-wave"></i> Pembayaran</a>
                                             </div>
                                         </div>

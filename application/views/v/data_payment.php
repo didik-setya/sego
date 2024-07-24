@@ -1,9 +1,12 @@
+<?php
+$role = $this->session->userdata('role');
+?>
 <div class="container-fluid">
     <h4 class="mb-4 text-gray-800">Data Pembayaran <?= $penghuni->nama_penghuni ?></h4>
     <div class="row">
         <div class="col-12">
 
-            <?php if ($penghuni->status == 1 || $penghuni->status == 2) { ?>
+            <?php if ($penghuni->status == 1 || $penghuni->status == 2 && $role == 'admin') { ?>
                 <button class="btn btn-sm btn-danger" onclick="add_payment()"><i class="fa fa-plus"></i> Tambah Pembayaran</button>
             <?php } ?>
 
@@ -34,13 +37,15 @@
                                     <td><?= $d->via_pembayaran ?></td>
                                     <td><?= $d->ket ?></td>
                                     <td>
-                                        <button class="btn btn-sm btn-danger" onclick="delete_data('<?= $d->id ?>')">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
+                                        <?php if ($role == 'admin') { ?>
+                                            <button class="btn btn-sm btn-danger" onclick="delete_data('<?= $d->id ?>')">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
 
-                                        <button class="btn btn-sm btn-primary" onclick="edit_data('<?= $d->id ?>', '<?= $d->periode ?>', '<?= $d->tgl_bayar ?>', '<?= $d->jml_bayar ?>', '<?= $d->via_pembayaran ?>', '<?= $d->ket ?>')">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
+                                            <button class="btn btn-sm btn-primary" onclick="edit_data('<?= $d->id ?>', '<?= $d->periode ?>', '<?= $d->tgl_bayar ?>', '<?= $d->jml_bayar ?>', '<?= $d->via_pembayaran ?>', '<?= $d->ket ?>')">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                             <?php } ?>
