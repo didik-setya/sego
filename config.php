@@ -19,6 +19,12 @@ return [
             'icon' => '<i class="fas fa-users"></i>',
             'url' => 'penghuni',
             'access' => ['admin', 'user']
+        ],
+        [
+            'nama_menu' => 'Pengeluaran',
+            'icon' => '<i class="fas fa-money-bill-wave-alt"></i>',
+            'url' => 'pengeluaran',
+            'access' => ['admin', 'user']
         ]
     ]
 ];

@@ -418,6 +418,114 @@ class Ajax extends CI_Controller
         $output = array_merge($params, $arr_token);
         echo json_encode($output);
     }
-
     //end ajax pembayaran
+
+
+
+
+    //ajax pengeluaran
+    public function valid_pengeluaran()
+    {
+        cek_ajax();
+        $this->form_validation->set_rules('biaya', 'Biaya', 'required|trim');
+        $this->form_validation->set_rules('nominal', 'Nominal', 'required|trim|numeric');
+
+        if ($this->form_validation->run() == false) {
+            $params = [
+                'type' => 'validation',
+                'err_biaya' => form_error('biaya'),
+                'err_nominal' => form_error('nominal'),
+                'token' => $this->security->get_csrf_hash()
+            ];
+            echo json_encode($params);
+            die;
+        } else {
+            $this->_pengeluaran();
+        }
+    }
+
+    private function _pengeluaran()
+    {
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $act = $post['act'];
+
+        switch ($act) {
+            case 'add':
+                $data = [
+                    'tanggal' => $post['date'],
+                    'biaya' => $post['biaya'],
+                    'nominal' => $post['nominal'],
+                    'ket' => $post['ket']
+                ];
+                $this->db->insert('pengeluaran', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'data berhasil di tambahkan'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'data gagal di tambahkan'
+                    ];
+                }
+                $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+                break;
+            case 'edit':
+
+                $data = [
+                    'tanggal' => $post['date'],
+                    'biaya' => $post['biaya'],
+                    'nominal' => $post['nominal'],
+                    'ket' => $post['ket']
+                ];
+                $this->db->where('id', $id)->update('pengeluaran', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'data berhasil di update'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'data gagal di update'
+                    ];
+                }
+                $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+
+                break;
+        }
+    }
+
+    public function delete_pengeluaran()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+        $this->db->where('id', $id)->delete('pengeluaran');
+
+        if ($this->db->affected_rows() > 0) {
+            $params = [
+                'status' => true,
+                'msg' => 'Data berhasil di hapus'
+            ];
+        } else {
+            $params = [
+                'status' => false,
+                'msg' => 'Data gagal di hapus'
+            ];
+        }
+
+        $arr_token = ['token' => $this->security->get_csrf_hash()];
+        $output = array_merge($params, $arr_token);
+        echo json_encode($output);
+    }
+
+    //end ajax pengeluaran
 }

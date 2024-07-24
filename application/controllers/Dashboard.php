@@ -58,4 +58,16 @@ class Dashboard extends CI_Controller
             redirect('penghuni');
         }
     }
+
+    public function pengeluaran()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $data = [
+            'title' => 'Data Pengeluaran',
+            'view' => 'v/data_pengeluaran',
+            'data' => $this->db->order_by('tanggal', 'DESC')->get('pengeluaran')->result()
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }

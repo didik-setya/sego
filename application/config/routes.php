@@ -53,16 +53,29 @@ $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+
+
 $route['actionlogin']['POST'] = 'login/validation_login';
+
+
 
 $route['kamar'] = 'dashboard/data_kamar';
 $route['validation_kamar']['POST'] = 'ajax/validation_kamar';
 $route['delete_kamar']['POST'] = 'ajax/delete_kamar';
 
 
+
 $route['penghuni'] = 'dashboard/data_penghuni';
 $route['action_data_penghuni']['POST'] = 'ajax/action_penghuni';
+
+
 
 $route['payment'] = 'dashboard/payment';
 $route['validation_payment']['POST'] = 'ajax/valid_payment';
 $route['delete_payment']['POST'] = 'ajax/delete_payment';
+
+
+
+$route['pengeluaran'] = 'dashboard/pengeluaran';
+$route['validation_pengeluaran']['POST'] = 'ajax/valid_pengeluaran';
+$route['delete_pengeluaran']['POST'] = 'ajax/delete_pengeluaran';
