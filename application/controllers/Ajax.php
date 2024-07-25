@@ -618,4 +618,107 @@ class Ajax extends CI_Controller
         echo json_encode($output);
     }
     //end ajax setoran
+
+
+
+    //ajax report
+    public function get_data_report()
+    {
+        cek_ajax();
+        $periode = $this->input->post('periode');
+        $create_date = date_create($periode);
+        $month = date_format($create_date, 'm');
+        $year = date_format($create_date, 'Y');
+
+        $penghuni_aktif = $this->app->query_all_data_penghuni(2)->result();
+        $pengeluaran = $this->db->where([
+            'month(tanggal)' => $month,
+            'year(tanggal)' => $year
+        ])
+            ->order_by('tanggal', 'ASC')
+            ->get('pengeluaran')->result();
+
+        $setoran = $this->db->where([
+            'month(tanggal)' => $month,
+            'year(tanggal)' => $year
+        ])
+            ->order_by('tanggal', 'ASC')
+            ->get('setoran')->result();
+
+        $data_pembayaran = [];
+        $data_pengeluaran = [];
+        $data_setoran = [];
+
+        foreach ($penghuni_aktif as $pa) {
+            $pembayaran = $this->db->get_where('pembayaran', [
+                'id_penghuni' => $pa->id_penghuni,
+                'periode' => $periode
+            ])->row();
+
+            if ($pembayaran) {
+                $class = '';
+                $tgl_bayar = cek_tgl($pembayaran->tgl_bayar);
+                $jml_bayar = number_format($pembayaran->jml_bayar);
+                $via = $pembayaran->via_pembayaran;
+                $ket = $pembayaran->ket;
+            } else {
+                $class = 'class="bg-danger text-light"';
+                $tgl_bayar = '-';
+                $jml_bayar = '-';
+                $via = '-';
+                $ket = '-';
+            }
+
+            $tgl_m = date_create($pa->tgl_penempatan);
+            $tgl_bayar_seharusnya = date_format($tgl_m, 'd');
+
+            $row = [
+                'tgl_seharusnya_bayar' => $tgl_bayar_seharusnya,
+                'tgl_bayar' => $tgl_bayar,
+                'no_kamar' => $pa->no_kamar,
+                'nama' => $pa->nama_penghuni,
+                'harga_kamar' => number_format($pa->price),
+                'bayar' => $jml_bayar,
+                'via' => $via,
+                'ket' => $ket,
+                'class' => $class
+            ];
+            $data_pembayaran[] = $row;
+        }
+
+        foreach ($pengeluaran as $p) {
+            $tgl = cek_tgl($p->tanggal);
+            $nominal = number_format($p->nominal);
+            $row = [
+                'tanggal' => $tgl,
+                'biaya' => $p->biaya,
+                'nominal' => $nominal,
+                'ket' => $p->ket
+            ];
+            $data_pengeluaran[] = $row;
+        }
+
+        foreach ($setoran as $s) {
+            $tgl = cek_tgl($s->tanggal);
+            $nominal = number_format($s->nominal);
+            $row = [
+                'tanggal' => $tgl,
+                'nominal' => $nominal,
+                'ket' => $s->ket
+            ];
+            $data_setoran[] = $row;
+        }
+
+        $data = [
+            'pembayaran' => $data_pembayaran,
+            'pengeluaran' => $data_pengeluaran,
+            'setoran' => $data_setoran
+        ];
+
+        $arr_token = ['token' => $this->security->get_csrf_hash()];
+        $output = array_merge($data, $arr_token);
+        echo json_encode($output);
+    }
+
+    //end ajax report
 }

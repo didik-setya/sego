@@ -85,3 +85,8 @@ $route['delete_pengeluaran']['POST'] = 'ajax/delete_pengeluaran';
 $route['setoran'] = 'dashboard/setoran';
 $route['validation_setoran']['POST'] = 'ajax/valid_setor';
 $route['delete_setor']['POST'] = 'ajax/delete_setor';
+
+
+
+$route['report'] = 'dashboard/report';
+$route['get_rekap_report']['POST'] = 'ajax/get_data_report';

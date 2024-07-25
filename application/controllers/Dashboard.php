@@ -82,4 +82,15 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+    public function report()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $data = [
+            'title' => 'Laporan',
+            'view' => 'v/report',
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }

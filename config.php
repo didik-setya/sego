@@ -31,6 +31,12 @@ return [
             'icon' => '<i class="fas fa-hand-holding-usd"></i>',
             'url' => 'setoran',
             'access' => ['admin', 'user']
+        ],
+        [
+            'nama_menu' => 'Laporan',
+            'icon' => '<i class="fas fa-folder-open"></i>',
+            'url' => 'report',
+            'access' => ['admin', 'user']
         ]
     ]
 ];
