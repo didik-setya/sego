@@ -728,6 +728,193 @@ class Ajax extends CI_Controller
 
 
 
+    //ajax data user
+    public function action_user()
+    {
+        cek_ajax();
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $act = $post['act'];
+
+        switch ($act) {
+            case 'add':
+                $this->form_validation->set_rules('name', 'Nama User', 'required|trim|min_length[3]');
+                $this->form_validation->set_rules('username', 'Username', 'required|trim|min_length[5]|is_unique[user.username]');
+                $this->form_validation->set_rules('newpass', 'Password Baru', 'required|trim|min_length[5]|matches[repass]');
+                $this->form_validation->set_rules('repass', 'Ulangi Password', 'required|trim|matches[repass]');
+
+                if ($this->form_validation->run() == false) {
+                    $params = [
+                        'type' => 'validation',
+                        'token' => $this->security->get_csrf_hash(),
+                        'err_name' => form_error('name'),
+                        'err_username' => form_error('username'),
+                        'err_newpass' => form_error('newpass'),
+                        'err_repass' => form_error('repass')
+                    ];
+                    echo json_encode($params);
+                    die;
+                } else {
+                    $data = [
+                        'name' => $post['name'],
+                        'username' => $post['username'],
+                        'password' => md5(sha1($post['newpass'])),
+                        'role' => $post['role'],
+                        'status' => 1
+                    ];
+                    $this->_action_user('add', $id, $data);
+                }
+
+                break;
+            case 'edit':
+
+                $this->form_validation->set_rules('name', 'Nama User', 'required|trim|min_length[3]');
+                $this->form_validation->set_rules('username', 'Username', 'required|trim|min_length[5]');
+
+                if ($this->form_validation->run() == false) {
+                    $params = [
+                        'type' => 'validation',
+                        'err_name' => form_error('name'),
+                        'err_username' => form_error('username'),
+                        'token' => $this->security->get_csrf_hash()
+                    ];
+                    echo json_encode($params);
+                    die;
+                } else {
+                    $get_username = $this->db->get_where('user', ['username' => $post['username'], 'id !=' => $id])->num_rows();
+
+                    if ($get_username >= 1) {
+                        $params = [
+                            'err_username' => 'Username has been registered',
+                            'token' => $this->security->get_csrf_hash(),
+                            'type' => 'validation'
+                        ];
+                        echo json_encode($params);
+                        die;
+                    } else {
+                        $data = [
+                            'name' => $post['name'],
+                            'username' => $post['username'],
+                            'role' => $post['role']
+                        ];
+                        $this->_action_user('edit', $id, $data);
+                    }
+                }
+
+                break;
+            case 'delete':
+
+                $this->db->where('id', $id)->delete('user');
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'User berhasil di hapus'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'User gagal di hapus'
+                    ];
+                }
+                $arr_token = [
+                    'token' => $this->security->get_csrf_hash()
+                ];
+                $output = array_merge($params, $arr_token);
+                echo json_encode($output);
+                die;
+
+                break;
+
+            case 'status':
+                $status = $post['status'];
+
+                if ($status == 'aktif') {
+                    $set_status = 1;
+                } else if ($status == 'nonaktif') {
+                    $set_status = 0;
+                } else {
+                    $set_status = 0;
+                }
+
+                $this->db->set('status', $set_status)->where('id', $id)->update('user');
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'Status user berhasil di ubah'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'Status user gagal di ubah'
+                    ];
+                }
+
+                $arr_token = [
+                    'token' => $this->security->get_csrf_hash()
+                ];
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+                break;
+        }
+    }
+
+    private function _action_user($action, $id, $data)
+    {
+        switch ($action) {
+            case 'add':
+                $this->db->insert('user', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'User baru berhasil di tambahkan'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'User baru gagal di tambahkan'
+                    ];
+                }
+
+                $arr_token = [
+                    'token' => $this->security->get_csrf_hash(),
+                    'type' => 'result'
+                ];
+                $output = array_merge($params, $arr_token);
+                echo json_encode($output);
+                die;
+                break;
+            case 'edit':
+
+                $this->db->where('id', $id)->update('user', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'User baru berhasil di update'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'User baru gagal di update'
+                    ];
+                }
+
+                $arr_token = [
+                    'token' => $this->security->get_csrf_hash(),
+                    'type' => 'result'
+                ];
+                $output = array_merge($params, $arr_token);
+                echo json_encode($output);
+                die;
+
+                break;
+        }
+    }
+
+
+    //end data user
+
+
     //ajax report
     public function get_data_report()
     {

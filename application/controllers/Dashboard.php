@@ -112,9 +112,10 @@ class Dashboard extends CI_Controller
         $url = $this->uri->segment(1);
         access_page($url);
         $data = [
-            'title' => 'Access Kost',
+            'title' => 'User & Access Kost',
             'view' => 'v/access_kost',
-            'data' => $this->db->get('kost')->result()
+            'data' => $this->db->get('user')->result(),
+
         ];
         $this->load->view('dashboard', $data);
     }

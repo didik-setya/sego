@@ -45,7 +45,7 @@ return [
             'access' => ['admin']
         ],
         [
-            'nama_menu' => 'Access Kost',
+            'nama_menu' => 'User & Access Kost',
             'icon' => '<i class="fas fa-house-user"></i>',
             'url' => 'access',
             'access' => ['admin']

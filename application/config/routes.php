@@ -100,3 +100,4 @@ $route['delete_kost']['POST'] = 'ajax/delete_kost';
 
 
 $route['access'] = 'dashboard/access_kost';
+$route['action_user']['POST'] = 'ajax/action_user';
