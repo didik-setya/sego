@@ -621,6 +621,113 @@ class Ajax extends CI_Controller
 
 
 
+    //ajax data kost
+    public function act_kost()
+    {
+        cek_ajax();
+        $this->form_validation->set_rules('kost', 'Nama Kost', 'required|trim');
+        if ($this->form_validation->run() == false) {
+            $params = [
+                'type' => 'validation',
+                'err_kost' => form_error('kost'),
+                'token' => $this->security->get_csrf_hash()
+            ];
+            echo json_encode($params);
+            die;
+        } else {
+            $this->_act_kost();
+        }
+    }
+
+    private function _act_kost()
+    {
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $act = $post['act'];
+
+        switch ($act) {
+            case 'add':
+                $data = [
+                    'kost_name' => $post['kost']
+                ];
+                $this->db->insert('kost', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'Data berhasil di tambahkan'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'Data gagal di tambahkan'
+                    ];
+                }
+
+                $arr_token = [
+                    'type' => 'result',
+                    'token' => $this->security->get_csrf_hash()
+                ];
+
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+                break;
+            case 'edit':
+                $data = [
+                    'kost_name' => $post['kost']
+                ];
+                $this->db->where('id', $id)->update('kost', $data);
+                if ($this->db->affected_rows() > 0) {
+                    $params = [
+                        'status' => true,
+                        'msg' => 'Data berhasil di update'
+                    ];
+                } else {
+                    $params = [
+                        'status' => false,
+                        'msg' => 'Data gagal di update'
+                    ];
+                }
+
+                $arr_token = [
+                    'type' => 'result',
+                    'token' => $this->security->get_csrf_hash()
+                ];
+
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+                break;
+        }
+    }
+
+    public function delete_kost()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+
+        $this->db->where('id', $id)->delete('kost');
+        if ($this->db->affected_rows() > 0) {
+            $params = [
+                'status' => true,
+                'msg' => 'Data berhasil di hapus'
+            ];
+        } else {
+            $params = [
+                'status' => false,
+                'msg' => 'Data gagal di hapus'
+            ];
+        }
+        $arr_token = [
+            'token' => $this->security->get_csrf_hash()
+        ];
+        $output = array_merge($arr_token, $params);
+        echo json_encode($output);
+    }
+    //end data kost
+
+
+
     //ajax report
     public function get_data_report()
     {

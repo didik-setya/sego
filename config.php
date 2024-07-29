@@ -37,6 +37,18 @@ return [
             'icon' => '<i class="fas fa-folder-open"></i>',
             'url' => 'report',
             'access' => ['admin', 'user']
+        ],
+        [
+            'nama_menu' => 'Mangement Kost',
+            'icon' => '<i class="fas fa-home"></i>',
+            'url' => 'kost',
+            'access' => ['admin']
+        ],
+        [
+            'nama_menu' => 'Access Kost',
+            'icon' => '<i class="fas fa-house-user"></i>',
+            'url' => 'access',
+            'access' => ['admin']
         ]
     ]
 ];

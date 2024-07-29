@@ -106,6 +106,16 @@
 
     })
 
+    $('#export_data').click(() => {
+        let periode = $('#periode').val()
+
+        if (periode == '') {
+            error_alert('Harap pilih periode')
+        } else {
+            window.open('<?= base_url('export/export_data?periode=') ?>' + periode);
+        }
+    })
+
 
 
 

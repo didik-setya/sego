@@ -28,15 +28,12 @@ class App_model extends CI_Model
         kamar.price,
         kamar.status AS status_kamar
         ')
+
             ->from('kamar')
-            ->join('penghuni', 'kamar.id = penghuni.id_kamar', 'RIGHT OUTER');
-        if ($status === 3) {
-            $this->db->where('penghuni.status', $status)
-                ->where('month(penghuni.tgl_keluar)', $month)
-                ->where('year(penghuni.tgl_keluar)', $year);
-        } else if ($status == 2) {
-            $this->db->where('penghuni.status', $status);
-        }
+            ->join('penghuni', 'kamar.id = penghuni.id_kamar', 'RIGHT OUTER')
+            ->where('penghuni.status', $status);
+
+
         $data = $this->db->get();
         return $data;
     }

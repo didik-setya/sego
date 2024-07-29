@@ -93,4 +93,29 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+    public function data_kost()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $data = [
+            'title' => 'Data Kost',
+            'view' => 'v/data_kost',
+            'data' => $this->db->get('kost')->result()
+        ];
+        $this->load->view('dashboard', $data);
+    }
+
+
+    public function access_kost()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $data = [
+            'title' => 'Access Kost',
+            'view' => 'v/access_kost',
+            'data' => $this->db->get('kost')->result()
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }
