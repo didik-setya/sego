@@ -13,6 +13,9 @@ if ($user->role == 'admin') {
 }
 $c_kost = count($to_kost);
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,10 +51,10 @@ $c_kost = count($to_kost);
 <body id="page-top">
 
     <!-- Page Wrapper -->
-    <div id="wrapper">
+    <div id="wrapper" class="sidebar-toggled">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-dark sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-dark sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">

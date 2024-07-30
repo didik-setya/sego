@@ -243,12 +243,14 @@ $role = $this->session->userdata('role');
         $('#price').val(price)
         $('#status').val('');
 
+
+        // $('#status').removeAttr('disabled')
         if (status == 1 || status == 4 || status == 0) {
             $('#status').attr('required', true);
-            $('#status').removeAttr('readonly');
+            $('#status').removeAttr('disabled');
             $('#status').val(status);
         } else {
-            $('#status').attr('readonly', true);
+            $('#status').attr('disabled', true);
             $('#status').removeAttr('required');
             $('#status').val('');
         }

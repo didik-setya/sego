@@ -5,8 +5,8 @@
             <button class="btn btn-sm btn-outline-dark" onclick="add_user()"><i class="fa fa-plus"></i> Tambah User</button>
 
             <div class="card mt-3">
-                <div class="card-body">
-                    <table class="table table-sm table-bordered">
+                <div class="card-body table-responsive">
+                    <table class="table table-sm table-bordered" id="main-table">
                         <thead>
                             <tr class="bg-dark text-light">
                                 <th>#</th>
@@ -149,6 +149,10 @@
 </div>
 
 <script>
+    $(document).ready(function() {
+        $('#main-table').dataTable()
+    })
+
     function add_user() {
         $('#staticBackdrop').modal('show')
         $('#staticBackdrop .modal-title').html('Tambah User Baru')

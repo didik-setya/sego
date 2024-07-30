@@ -11,7 +11,7 @@ $role = $this->session->userdata('role');
             <?php } ?>
 
             <div class="card mt-3">
-                <div class="card-body">
+                <div class="card-body table-responsive">
 
                     <table class="table table-sm table-bordered w-100" id="main_table">
                         <thead>
