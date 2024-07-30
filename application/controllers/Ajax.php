@@ -143,6 +143,7 @@ class Ajax extends CI_Controller
     {
         cek_ajax();
         $post = $this->input->post(null, true);
+        $kost_id = $this->session->userdata('kost_id');
 
         $id = $post['id'];
         $act = $post['act'];
@@ -184,7 +185,9 @@ class Ajax extends CI_Controller
                     'last_update' => date('Y-m-d H:i:s'),
                     'tgl_pemesanan' => $tgl_pemesanan,
                     'tgl_penempatan' => $tgl_penempatan,
-                    'tgl_keluar' => $tgl_keluar
+                    'tgl_keluar' => $tgl_keluar,
+                    'alamat' => $post['alamat'],
+                    'id_kost' => $kost_id
                 ];
 
                 $this->db->trans_begin();
@@ -258,7 +261,8 @@ class Ajax extends CI_Controller
                     'last_update' => date('Y-m-d H:i:s'),
                     'tgl_pemesanan' => $tgl_pemesanan,
                     'tgl_penempatan' => $tgl_penempatan,
-                    'tgl_keluar' => $tgl_keluar
+                    'tgl_keluar' => $tgl_keluar,
+                    'alamat' => $post['alamat']
                 ];
 
                 // $this->db->trans_begin();

@@ -18,6 +18,7 @@ $role = $this->session->userdata('role');
                                 <th>Nama</th>
                                 <th>Kamar</th>
                                 <th>Status</th>
+                                <th>Alamat</th>
                                 <th>Last Update</th>
                                 <th><i class="fa fa-cogs"></i></th>
                             </tr>
@@ -50,6 +51,7 @@ $role = $this->session->userdata('role');
                                         }
                                         ?>
                                     </td>
+                                    <td><?= $d->alamat ?></td>
                                     <td><?= cek_tgl($d->last_update) ?></td>
                                     <td>
                                         <div class="btn-group dropleft">
@@ -58,7 +60,7 @@ $role = $this->session->userdata('role');
                                             </button>
                                             <div class="dropdown-menu">
                                                 <?php if ($role == 'admin') { ?>
-                                                    <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->id_kamar ?>', '<?= $d->nama_penghuni ?>', '<?= $d->status ?>')"><i class="fa fa-edit"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->id_kamar ?>', '<?= $d->nama_penghuni ?>', '<?= $d->status ?>', '<?= $d->alamat ?>')"><i class="fa fa-edit"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" onclick="delete_penghuni('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
                                                 <?php } ?>
                                                 <a class="dropdown-item" href="<?= base_url('payment?id=' . $hash_id) ?>"><i class="fas fa-money-bill-wave"></i> Pembayaran</a>
@@ -114,8 +116,12 @@ $role = $this->session->userdata('role');
                         <option value="2">Di tempati</option>
                         <option value="3">Keluar</option>
                         <option value="0">Batal Pesan</option>
-
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label><b>Alamat</b></label>
+                    <input name="alamat" id="alamat" class="form-control"></input>
                 </div>
 
             </div>
@@ -147,6 +153,7 @@ $role = $this->session->userdata('role');
         $('#kamar').val('')
         $('#name').val('')
         $('#status').val('')
+        $('#alamat').val('')
     }
 
     $('#form_penghuni').submit(function(e) {
@@ -184,7 +191,7 @@ $role = $this->session->userdata('role');
         })
     })
 
-    function edit_data(id, kamar, penghuni, status) {
+    function edit_data(id, kamar, penghuni, status, alamat) {
         $('#staticBackdrop').modal('show')
         $('#staticBackdrop').find('.modal-title').html('Edit Data Penghuni')
         $('#kamar').removeAttr('required');
@@ -194,6 +201,7 @@ $role = $this->session->userdata('role');
         $('#kamar').val('')
         $('#name').val(penghuni)
         $('#status').val(status)
+        $('#alamat').val(alamat)
     }
 
 
