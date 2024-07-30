@@ -1,7 +1,5 @@
 <div class="container-fluid">
     <h4 class="mb-4 text-gray-800">Data User & Access Kost</h4>
-
-
     <div class="row">
         <div class="col-12">
             <button class="btn btn-sm btn-outline-dark" onclick="add_user()"><i class="fa fa-plus"></i> Tambah User</button>

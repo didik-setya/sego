@@ -37,4 +37,15 @@ class App_model extends CI_Model
         $data = $this->db->get();
         return $data;
     }
+
+
+    public function get_access_kost($id)
+    {
+        $this->db->select('kost.*')
+            ->from('kost')
+            ->join('access_kost', 'kost.id = access_kost.id_kost')
+            ->where('access_kost.id_user', $id);
+        $data = $this->db->get()->result();
+        return $data;
+    }
 }

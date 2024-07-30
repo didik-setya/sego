@@ -56,7 +56,8 @@ $route['translate_uri_dashes'] = FALSE;
 
 
 $route['actionlogin']['POST'] = 'login/validation_login';
-
+$route['check_access'] = 'login/check_access';
+$route['to_login'] = 'login/access_to_kost';
 
 
 $route['kamar'] = 'dashboard/data_kamar';

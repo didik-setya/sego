@@ -46,7 +46,7 @@ class Login extends CI_Controller
                     'type' => 'result',
                     'status' => true,
                     'msg' => 'Success Login',
-                    'redirect' => base_url('dashboard')
+                    'redirect' => base_url('check_access')
                 ];
             } else {
                 $params = [
@@ -65,6 +65,33 @@ class Login extends CI_Controller
 
         $res = array_merge($params, $tokenval);
         echo json_encode($res);
+    }
+
+    public function check_access()
+    {
+        $username = $this->session->userdata('username');
+        $get_user = $this->db->get_where('user', ['username' => $username])->row();
+
+        if ($get_user) {
+            if ($get_user->role == 'admin') {
+                $data['access'] = $this->db->get('kost')->result();
+            } else {
+                $data['access'] = $this->app->get_access_kost($get_user->id);
+            }
+            $this->load->view('check_access', $data);
+        } else {
+            $this->logout();
+        }
+    }
+
+
+    public function access_to_kost()
+    {
+        $id = $this->input->post('id', true);
+        $get_kost = $this->db->get_where('kost', ['id' => $id])->row();
+        $data = ['kost_id' => $get_kost->id, 'kost_name' => $get_kost->kost_name];
+        $this->session->set_userdata($data);
+        redirect(base_url());
     }
 
     public function logout()
