@@ -41,7 +41,7 @@
 
 <!-- Modal -->
 <div class="modal" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark text-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
@@ -53,17 +53,65 @@
             <input type="hidden" name="id" id="id">
             <input type="hidden" name="act" id="act">
             <div class="modal-body">
-                <div class="form-group">
-                    <label><b>Nama Kost</b></label>
-                    <input type="text" name="kost" id="kost" class="form-control">
-                    <small class="text-danger" id="err_kost"></small>
+
+                <div class="row justify-content-center">
+                    <div class="form-group col-md-6" id="form-kost">
+                        <label><b>Nama Kost</b></label>
+                        <input type="text" name="kost" id="kost" class="form-control">
+                        <small class="text-danger" id="err_kost"></small>
+                    </div>
+
+                    <div class="form-group col-md-6" id="form-foto">
+                        <label><b>Foto</b></label>
+                        <input type="file" name="foto_kost" id="foto_kost" class="form-control">
+                    </div>
+
+                    <div class="form-group col-12">
+                        <label><b>Alamat</b></label>
+                        <textarea name="alamat" id="alamat" class="form-control"></textarea>
+                    </div>
                 </div>
+
+                <hr>
+                <h5><b>Kontak</b></h5>
+                <hr>
+                <div id="contac_area">
+                    <div class="row">
+                        <div class="form-group col-md-5">
+                            <input type="text" name="nama_kontak[]" id="nama_kontak[]" class="form-control" placeholder="Nama Kontak" required>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input type="number" name="no_kontak[]" id="no_kontak[]" class="form-control" placeholder="No. Kontak" required>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button style="height: 100%" onclick="add_contact()" class="btn btn-sm btn-success w-100" type="button"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+
+
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div id="contact_form_hidden" class="d-none">
+    <div class="row">
+        <div class="form-group col-md-5">
+            <input type="text" name="nama_kontak[]" id="nama_kontak[]" class="form-control" placeholder="Nama Kontak" required>
+        </div>
+        <div class="form-group col-md-5">
+            <input type="number" name="no_kontak[]" id="no_kontak[]" class="form-control" placeholder="No. Kontak" required>
+        </div>
+        <div class="form-group col-md-2">
+            <button style="height: 100%" class="btn btn-sm btn-danger w-100 remove-contact" type="button"><i class="fa fa-trash"></i></button>
         </div>
     </div>
 </div>
@@ -81,6 +129,10 @@
         $('#act').val('add')
         $('#kost').val('')
         $('#err_kost').html('')
+
+        $('#foto_kost').attr('required', true)
+        $('#foto_kost').val('')
+        $('#alamat').val('')
     }
 
     function edit_data(id, kost) {
@@ -91,6 +143,10 @@
         $('#act').val('edit')
         $('#kost').val(kost)
         $('#err_kost').html('')
+
+        $('#foto_kost').removeAttr('required')
+        $('#foto_kost').val('')
+        $('#alamat').val('')
     }
 
     function delete_data(id) {
@@ -151,8 +207,10 @@
         loading()
 
         $.ajax({
+            contentType: false,
+            processData: false,
             url: $(this).attr('action'),
-            data: $(this).serialize(),
+            data: new FormData(this),
             type: 'POST',
             dataType: 'JSON',
             success: function(d) {
@@ -166,6 +224,7 @@
                             $('#err_kost').html(d.err_kost)
                         }
                     } else if (d.type == 'result') {
+                        $('#err_kost').html('')
                         if (d.status == false) {
                             error_alert(d.msg)
                         } else {
@@ -188,6 +247,18 @@
             }
         })
     })
+
+    function add_contact() {
+        let html = $('#contact_form_hidden').html()
+        $('#contac_area').append(html)
+    }
+
+    $(document).on('click', '.remove-contact', function() {
+        $(this).parent('div').parent('div').remove()
+    })
+
+
+
 
 
 

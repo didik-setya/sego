@@ -665,9 +665,49 @@ class Ajax extends CI_Controller
 
         switch ($act) {
             case 'add':
+
+
+                $foto_kost = $_FILES['foto_kost']['name'];
+
+                $nama_kontak = $post['nama_kontak'];
+                $no_kontak = $post['no_kontak'];
+                $c_kontak = count($nama_kontak);
+
+                $post_kontak = [];
+                for ($i = 0; $i < $c_kontak; $i++) {
+                    $row = [
+                        'name' => $nama_kontak[$i],
+                        'no' => $no_kontak[$i]
+                    ];
+                    $post_kontak[] = $row;
+                }
+                $data_kontak = json_encode($post_kontak);
+
+
+                $config['upload_path'] = './uploads/';
+                $config['allowed_types'] = 'gif|jpg|png|jpeg';
+                $this->load->library('upload', $config);
+                if ($this->upload->do_upload('foto_kost')) {
+                    $file = $this->upload->data('file_name');
+                } else {
+                    $out = [
+                        'status' => false,
+                        'msg' =>  $this->upload->display_errors(),
+                        'type' => 'result',
+                        'token' => $this->security->get_csrf_hash()
+                    ];
+                    echo json_encode($out);
+                    die;
+                }
+
+
                 $data = [
-                    'kost_name' => $post['kost']
+                    'kost_name' => $post['kost'],
+                    'alamat' => $post['alamat'],
+                    'foto' => $file,
+                    'kontak' => $data_kontak
                 ];
+
                 $this->db->insert('kost', $data);
                 if ($this->db->affected_rows() > 0) {
                     $params = [
