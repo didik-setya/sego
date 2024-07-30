@@ -17,10 +17,11 @@ class Dashboard extends CI_Controller
     {
         $url = $this->uri->segment(1);
         access_page($url);
+        $kost_id = $this->session->userdata('kost_id');
         $data = [
             'title' => 'Data Kamar',
             'view' => 'v/data_kamar',
-            'data' => $this->db->get('kamar')->result()
+            'data' => $this->db->where('id_kost', $kost_id)->get('kamar')->result()
         ];
         $this->load->view('dashboard', $data);
     }

@@ -4,8 +4,14 @@ $menu = $config['menu'];
 
 $role = $this->session->userdata('role');
 $username = $this->session->userdata('username');
-
 $user = $this->db->get_where('user', ['username' => $username])->row();
+
+if ($user->role == 'admin') {
+    $to_kost = $this->db->get('kost')->result();
+} else {
+    $to_kost = $this->app->get_access_kost($user->id);
+}
+$c_kost = count($to_kost);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,6 +115,13 @@ $user = $this->db->get_where('user', ['username' => $username])->row();
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <?php if ($c_kost > 1) { ?>
+                                    <a class="dropdown-item" href="#" onclick="change_kost()">
+                                        <i class="fas fa-home fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Pindah Kost
+                                    </a>
+                                <?php } ?>
+
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
@@ -148,6 +161,46 @@ $user = $this->db->get_where('user', ['username' => $username])->row();
     </div>
     <!-- End of Page Wrapper -->
 
+
+    <!-- Modal -->
+    <div class="modal" id="modalSelectKost" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title" id="staticBackdropLabel">Pilih Perumahan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="text-light" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center">
+                        <?php foreach ($to_kost as $k) { ?>
+                            <div class="col-12 col-md-4">
+                                <div class="my-1 card">
+                                    <div class="card-body bg-primary text-light">
+                                        <h5 class="text-center my-3">
+                                            <b><?= $k->kost_name ?></b>
+                                        </h5>
+                                    </div>
+                                    <?= form_open('to_login', 'class="select_kost"') ?>
+                                    <div class="card-footer bg-dark text-center">
+                                        <input type="hidden" name="id" value="<?= $k->id ?>">
+                                        <button class="btn btn-sm btn-success" type="submit"><i class="fas fa-arrow-circle-right"></i> Go</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
@@ -169,7 +222,26 @@ $user = $this->db->get_where('user', ['username' => $username])->row();
     <script src="<?= base_url('assets/') ?>vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="<?= base_url('assets/') ?>vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
+    <script>
+        function change_kost() {
+            $('#modalSelectKost').modal('show')
+        }
 
+        $('.select_kost').submit(function(e) {
+            loading_animation()
+        })
+
+        function loading_animation() {
+            Swal.fire({
+                title: "Loading",
+                html: "Please wait...",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        }
+    </script>
 </body>
 
 </html>

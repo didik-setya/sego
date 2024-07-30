@@ -79,7 +79,7 @@
     <script src="<?= base_url('assets/') ?>js/sb-admin-2.min.js"></script>
     <script src="<?= base_url('assets/') ?>vendor/sweetalert/dist/sweetalert2.all.min.js"></script>
     <script>
-        $('#select_kost').submit(function(e) {
+        $('.select_kost').submit(function(e) {
             loading()
         })
 
