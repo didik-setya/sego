@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set('Asia/Jakarta');
+
+
 class Ajax extends CI_Controller
 {
 
@@ -26,6 +28,7 @@ class Ajax extends CI_Controller
 
     private function form_kamar()
     {
+        $kost_id = $this->session->userdata('kost_id');
         $act = $this->input->post('act');
         $id = $this->input->post('id');
 
@@ -37,7 +40,9 @@ class Ajax extends CI_Controller
                     'km' => $this->input->post('km', true),
                     'status' => 1,
                     'last_update' => date('Y-m-d H:i:s'),
-                    'price' => $this->input->post('price')
+                    'price' => $this->input->post('price'),
+                    'lokasi_gedung' => $this->input->post('lokasi', true),
+                    'id_kost' => $kost_id
                 ];
                 $this->db->insert('kamar', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -68,7 +73,9 @@ class Ajax extends CI_Controller
                         'no_kamar' => $this->input->post('kamar', true),
                         'km' => $this->input->post('km', true),
                         'price' => $this->input->post('price'),
-                        'last_update' => date('Y-m-d H:i:s')
+                        'last_update' => date('Y-m-d H:i:s'),
+                        'lokasi_gedung' => $this->input->post('lokasi', true),
+                        'id_kost' => $kost_id
                     ];
                 } else {
                     $data = [
@@ -76,7 +83,9 @@ class Ajax extends CI_Controller
                         'km' => $this->input->post('km', true),
                         'status' => $status,
                         'price' => $this->input->post('price'),
-                        'last_update' => date('Y-m-d H:i:s')
+                        'last_update' => date('Y-m-d H:i:s'),
+                        'lokasi_gedung' => $this->input->post('lokasi', true),
+                        'id_kost' => $kost_id
                     ];
                 }
 

@@ -22,6 +22,7 @@ $role = $this->session->userdata('role');
                                 <th>Kamar Mandi</th>
                                 <th>Harga</th>
                                 <th>Status</th>
+                                <th>Gedung</th>
                                 <th>Last Update</th>
                                 <th><i class="fa fa-cogs"></i></th>
                             </tr>
@@ -54,6 +55,7 @@ $role = $this->session->userdata('role');
                                         }
                                         ?>
                                     </td>
+                                    <td><?= $d->lokasi_gedung ?></td>
                                     <td><?= cek_tgl($d->last_update) ?></td>
                                     <td>
                                         <?php if ($role == 'admin') { ?>
@@ -62,7 +64,7 @@ $role = $this->session->userdata('role');
                                                     <i class="fa fa-cogs"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->no_kamar ?>', '<?= $d->km ?>', '<?= $d->status ?>', '<?= $d->price ?>')"><i class="fa fa-edit"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->no_kamar ?>', '<?= $d->km ?>', '<?= $d->status ?>', '<?= $d->price ?>', '<?= $d->lokasi_gedung ?>')"><i class="fa fa-edit"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" onclick="delete_data('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
                                                 </div>
                                             </div>
@@ -128,6 +130,12 @@ $role = $this->session->userdata('role');
                     </select>
                 </div>
 
+
+                <div class="form-group">
+                    <label><b>Lokasi Gedung</b></label>
+                    <input type="text" name="lokasi" id="lokasi" class="form-control">
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -144,7 +152,7 @@ $role = $this->session->userdata('role');
     $(document).ready(function() {
         $('#main_table').dataTable({
             autoWidth: false,
-            scrollX: true,
+            scrollX: false,
             ordering: false
         })
 
@@ -222,9 +230,10 @@ $role = $this->session->userdata('role');
         $('#err_price').html('')
         $('#id_kamar').val('')
         $('#price').val('')
+        $('#lokasi').val('')
     }
 
-    function edit_data(id, kamar, km, status, price) {
+    function edit_data(id, kamar, km, status, price, lokasi) {
         $('#staticBackdrop').modal('show')
         $('#staticBackdrop').find('.modal-title').html('Edit Data Kamar')
         $('#act_kamar').val('edit')
@@ -247,6 +256,7 @@ $role = $this->session->userdata('role');
         $('#err_kamar').html('')
         $('#err_price').html('')
         $('#id_kamar').val(id)
+        $('#lokasi').val(lokasi)
     }
 
     function delete_data(id) {
