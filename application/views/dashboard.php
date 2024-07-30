@@ -149,7 +149,7 @@ $c_kost = count($to_kost);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; 2024 <a href="https://kreatindo.com" target="_blank">Kreatindo</a> </span>
+                        <span>Copyright &copy; 2024 <a href="https://github.com/didik-setya" target="_blank">The Developer</a> </span>
                     </div>
                 </div>
             </footer>

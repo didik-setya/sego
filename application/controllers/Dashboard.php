@@ -65,10 +65,11 @@ class Dashboard extends CI_Controller
     {
         $url = $this->uri->segment(1);
         access_page($url);
+        $kost_id = $this->session->userdata('kost_id');
         $data = [
             'title' => 'Data Pengeluaran',
             'view' => 'v/data_pengeluaran',
-            'data' => $this->db->order_by('tanggal', 'DESC')->get('pengeluaran')->result()
+            'data' => $this->db->order_by('tanggal', 'DESC')->get_where('pengeluaran', ['id_kost' => $kost_id])->result()
         ];
         $this->load->view('dashboard', $data);
     }
@@ -77,10 +78,11 @@ class Dashboard extends CI_Controller
     {
         $url = $this->uri->segment(1);
         access_page($url);
+        $kost_id = $this->session->userdata('kost_id');
         $data = [
             'title' => 'Data Setoran',
             'view' => 'v/data_setoran',
-            'data' => $this->db->order_by('tanggal', 'DESC')->get('setoran')->result()
+            'data' => $this->db->order_by('tanggal', 'DESC')->get_where('setoran', ['id_kost' => $kost_id])->result()
         ];
         $this->load->view('dashboard', $data);
     }

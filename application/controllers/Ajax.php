@@ -460,6 +460,7 @@ class Ajax extends CI_Controller
     private function _pengeluaran()
     {
         $post = $this->input->post(null, true);
+        $kost_id = $this->session->userdata('kost_id');
         $id = $post['id'];
         $act = $post['act'];
 
@@ -469,7 +470,8 @@ class Ajax extends CI_Controller
                     'tanggal' => $post['date'],
                     'biaya' => $post['biaya'],
                     'nominal' => $post['nominal'],
-                    'ket' => $post['ket']
+                    'ket' => $post['ket'],
+                    'id_kost' => $kost_id
                 ];
                 $this->db->insert('pengeluaran', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -567,6 +569,7 @@ class Ajax extends CI_Controller
     private function _setor()
     {
         $post = $this->input->post(null, true);
+        $kost_id = $this->session->userdata('kost_id');
         $id = $post['id'];
         $act = $post['act'];
 
@@ -575,8 +578,10 @@ class Ajax extends CI_Controller
                 $data = [
                     'tanggal' => $post['date'],
                     'ket' => $post['ket'],
-                    'nominal' => $post['nominal']
+                    'nominal' => $post['nominal'],
+                    'id_kost' => $kost_id
                 ];
+
                 $this->db->insert('setoran', $data);
 
                 if ($this->db->affected_rows() > 0) {
