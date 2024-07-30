@@ -911,6 +911,100 @@ class Ajax extends CI_Controller
         }
     }
 
+    public function access_kost()
+    {
+        cek_ajax();
+        $post = $this->input->post(null, true);
+
+        $id = $post['id'];
+        $act  = $post['act'];
+
+        switch ($act) {
+            case 'get_data':
+                $data = [];
+                $data_kost = $this->db->get('kost')->result();
+                foreach ($data_kost as $dk) {
+                    $check_access = $this->db->get_where('access_kost', ['id_user' => $id, 'id_kost' => $dk->id])->row();
+
+                    if ($check_access) {
+                        $access = 1;
+                    } else {
+                        $access = 0;
+                    }
+
+                    $row = [
+                        'id_kost' => $dk->id,
+                        'kost_name' => $dk->kost_name,
+                        'access' => $access
+                    ];
+                    $data[] = $row;
+                }
+                $output = [
+                    'token' => $this->security->get_csrf_hash(),
+                    'access' => $data
+                ];
+                echo json_encode($output);
+                die;
+
+                break;
+            case 'change':
+
+                $list_kost = $post['kost'];
+                $c_kost = count($list_kost);
+
+                if ($c_kost > 0) {
+                    $data = [];
+                    for ($i = 0; $i < $c_kost; $i++) {
+                        $row = [
+                            'id_user' => $id,
+                            'id_kost' => $list_kost[$i]
+                        ];
+                        $data[] = $row;
+                    }
+
+                    $this->db->trans_begin();
+
+                    $this->db->delete('access_kost', ['id_user' => $id]);
+                    $this->db->insert_batch('access_kost', $data);
+
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        $params = [
+                            'status' => false,
+                            'msg' => 'Access gagal di perbarui'
+                        ];
+                    } else {
+                        $this->db->trans_commit();
+                        $params = [
+                            'status' => true,
+                            'msg' => 'Access berhasil di perbarui'
+                        ];
+                    }
+                } else {
+                    $this->db->delete('access_kost', ['id_user' => $id]);
+                    if ($this->db->affected_rows() > 0) {
+                        $params = [
+                            'status' => true,
+                            'msg' => 'Access berhasil di perbarui'
+                        ];
+                    } else {
+                        $params = [
+                            'status' => false,
+                            'msg' => 'Access gagal di perbarui'
+                        ];
+                    }
+                }
+
+                $arr_token = [
+                    'token' => $this->security->get_csrf_hash()
+                ];
+                $output = array_merge($arr_token, $params);
+                echo json_encode($output);
+                die;
+
+                break;
+        }
+    }
 
     //end data user
 

@@ -43,7 +43,7 @@
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->name ?>', '<?= $d->username ?>', '<?= $d->role ?>')"><i class="fa fa-edit"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" onclick="delete_data('<?= $d->id ?>')"><i class="fa fa-trash"></i> Delete</a>
-                                                    <a class="dropdown-item" href="#"><i class="fas fa-key"></i> Access Kost</a>
+                                                    <a class="dropdown-item" href="#" onclick="access_kost('<?= $d->id ?>')"><i class="fas fa-key"></i> Access Kost</a>
 
                                                     <?php if ($d->status == 1) { ?>
                                                         <a class="dropdown-item" href="#" onclick="change_status('<?= $d->id ?>', 'nonaktif')"><i class="fa fa-power-off"></i> Nonaktifkan</a>
@@ -125,6 +125,30 @@
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal" id="modalAccess" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-light">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span class="text-light" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?= form_open('access_kost', 'id="form_access"') ?>
+            <input type="hidden" name="id" id="id_access">
+            <input type="hidden" name="act" id="act_access" value="change">
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     function add_user() {
@@ -325,6 +349,92 @@
             }
         })
     })
+
+    $('#form_access').submit(function(e) {
+        e.preventDefault()
+        loading();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            type: 'POST',
+            dataType: 'JSON',
+            success: function(d) {
+                regenerate_token(d.token)
+                setTimeout(() => {
+                    if (d.status == false) {
+                        error_alert(d.msg)
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: d.msg
+                        }).then((res) => {
+                            window.location.reload()
+                        })
+                    }
+                }, 200);
+            },
+            error: function(xhr, status, error) {
+                setTimeout(() => {
+                    Swal.close()
+                    error_alert(error, xhr)
+                }, 200);
+            }
+        })
+    })
+
+
+    function access_kost(id) {
+        $('#modalAccess .modal-title').html('Access Kost')
+        $('#modalAccess .modal-body').html('')
+        $('#id_access').val(id)
+        let token_name = '<?= $this->security->get_csrf_token_name() ?>'
+        let token = $('input[name=' + token_name + ']').val()
+
+        loading()
+        $.ajax({
+            url: '<?= base_url('access_kost') ?>',
+            data: {
+                '<?= $this->security->get_csrf_token_name() ?>': token,
+                act: 'get_data',
+                id: id
+            },
+            type: 'POST',
+            dataType: 'JSON',
+            success: function(d) {
+                regenerate_token(d.token)
+                setTimeout(() => {
+                    Swal.close()
+                    $('#modalAccess').modal('show');
+
+                    const access = d.access;
+                    let html = '';
+                    let i;
+                    let a = 1;
+                    let b = 1;
+
+                    for (i = 0; i < access.length; i++) {
+                        if (access[i].access == 1) {
+                            html += '<div class="form-check form-check-inline"><input checked class="form-check-input" type="checkbox" id="inlineCheckbox' + a++ + '" value="' + access[i].id_kost + '" name="kost[]"><label class="form-check-label" for="inlineCheckbox' + b++ + '">' + access[i].kost_name + '</label></div>';
+                        } else {
+                            html += '<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="inlineCheckbox' + a++ + '" value="' + access[i].id_kost + '" name="kost[]"><label class="form-check-label" for="inlineCheckbox' + b++ + '">' + access[i].kost_name + '</label></div>';
+                        }
+                    }
+                    $('#modalAccess .modal-body').html(html)
+
+                }, 200);
+            },
+            error: function(xhr, status, error) {
+                setTimeout(() => {
+                    Swal.close()
+                    error_alert(error, xhr)
+                }, 200);
+            }
+        })
+
+    }
+
 
 
 
