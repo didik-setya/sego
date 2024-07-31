@@ -1,14 +1,21 @@
 <div class="container-fluid">
     <h4 class="mb-4 text-gray-800">Laporan</h4>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <div class="form-group">
-                <input type="month" name="periode" id="periode" class="form-control">
-                <small>Pilih Periode</small>
+                <input type="date" name="periode_a" id="periode_a" class="form-control">
+                <small>Dari Tanggal</small>
             </div>
         </div>
-        <div class="col-md-5"></div>
-        <div class="col-md-4 text-center">
+        <div class="col-6 col-md-3">
+            <div class="form-group">
+                <input type="date" name="periode_b" id="periode_b" class="form-control">
+                <small>Sampai Tanggal</small>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+
+        <div class="col-md-4 text-center my-2">
             <button class="btn btn-sm btn-primary" id="filter_data"><i class="fas fa-filter"></i> Filter</button>
             <button class="btn btn-sm btn-success" id="export_data"><i class="far fa-file-excel"></i> Export</button>
         </div>
