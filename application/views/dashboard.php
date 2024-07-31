@@ -125,7 +125,7 @@ $c_kost = count($to_kost);
                                     </a>
                                 <?php } ?>
 
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="<?= base_url('settings') ?>">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
                                 </a>

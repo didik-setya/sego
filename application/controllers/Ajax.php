@@ -1281,6 +1281,128 @@ class Ajax extends CI_Controller
         $output = array_merge($data, $arr_token);
         echo json_encode($output);
     }
-
     //end ajax report
+
+
+    //ajax settings
+    public function validation_settings()
+    {
+        cek_ajax();
+        $this->form_validation->set_rules('username', 'Username', 'required|trim|min_length[5]');
+        $this->form_validation->set_rules('name', 'Nama', 'required|trim|min_length[3]');
+
+        if ($this->form_validation->run() == false) {
+            $params = [
+                'type' => 'validation',
+                'token' => $this->security->get_csrf_hash(),
+                'err_username' => form_error('username'),
+                'err_name' => form_error('name')
+            ];
+            echo json_encode($params);
+            die;
+        } else {
+            $this->_settings();
+        }
+    }
+
+    private function _settings()
+    {
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $username = $post['username'];
+
+        $check_username = $this->db->get_where('user', ['id !=' => $id, 'username' => $username])->num_rows();
+        if ($check_username > 0) {
+            $params = [
+                'status' => false,
+                'msg' => 'Username has been registered'
+            ];
+        } else {
+
+            $data = [
+                'username' => $username,
+                'name' =>  $post['name'],
+            ];
+
+            $this->db->where('id', $id)->update('user', $data);
+            if ($this->db->affected_rows() > 0) {
+                $params = [
+                    'status' => true,
+                    'msg' => 'Data berhasil di update'
+                ];
+            } else {
+                $params = [
+                    'status' => false,
+                    'msg' => 'Data gagal di update'
+                ];
+            }
+        }
+
+        $arr_token = [
+            'type' => 'result',
+            'token' => $this->security->get_csrf_hash()
+        ];
+        $output = array_merge($params, $arr_token);
+        echo json_encode($output);
+    }
+
+    public function validation_password()
+    {
+        cek_ajax();
+        $this->form_validation->set_rules('old_pass', 'Password Lama', 'required|trim');
+        $this->form_validation->set_rules('new_pass', 'Password Baru', 'required|trim|min_length[5]|matches[re_newpass]');
+        $this->form_validation->set_rules('re_newpass', 'Ulangi Password Baru', 'required|trim|matches[new_pass]');
+
+
+        if ($this->form_validation->run() == false) {
+            $params = [
+                'type' => 'validation',
+                'token' => $this->security->get_csrf_hash(),
+                'err_oldpass' => form_error('old_pass'),
+                'err_newpass' => form_error('new_pass'),
+                'err_re_newpass' => form_error('re_newpass')
+            ];
+            echo json_encode($params);
+            die;
+        } else {
+            $this->_password();
+        }
+    }
+
+
+    private function _password()
+    {
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $old_pass = md5(sha1($post['old_pass']));
+        $get_user = $this->db->get_where('user', ['id' => $id])->row();
+        if ($get_user->password == $old_pass) {
+            $new_pass = md5(sha1($post['new_pass']));
+            $this->db->set('password', $new_pass)->where('id', $id)->update('user');
+
+            if ($this->db->affected_rows() > 0) {
+                $params = [
+                    'status' => true,
+                    'msg' => 'Password berhasil di update'
+                ];
+            } else {
+                $params = [
+                    'status' => false,
+                    'msg' => 'Password gagal di update'
+                ];
+            }
+        } else {
+            $params = [
+                'status' => false,
+                'msg' => 'Invalid Password Lama'
+            ];
+        }
+        $arr_token = [
+            'type' => 'result',
+            'token' => $this->security->get_csrf_hash()
+        ];
+        $output = array_merge($params, $arr_token);
+        echo json_encode($output);
+    }
+    //end ajax settings
 }

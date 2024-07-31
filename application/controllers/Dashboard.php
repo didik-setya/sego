@@ -123,4 +123,18 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+
+    public function settings()
+    {
+        $username = $this->session->userdata('username');
+        $user = $this->db->get_where('user', ['username' => $username])->row();
+        $data = [
+            'title' => 'Settings',
+            'view' => 'v/settings',
+            'data' => $user
+
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }
