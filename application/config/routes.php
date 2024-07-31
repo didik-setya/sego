@@ -97,6 +97,7 @@ $route['get_rekap_report']['POST'] = 'ajax/get_data_report';
 $route['kost'] = 'dashboard/data_kost';
 $route['action_kost']['POST'] = 'ajax/act_kost';
 $route['delete_kost']['POST'] = 'ajax/delete_kost';
+$route['get_kost']['POST'] = 'ajax/get_data_kost';
 
 
 

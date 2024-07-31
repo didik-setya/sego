@@ -1,4 +1,7 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Base;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set('Asia/Jakarta');
 
@@ -673,6 +676,17 @@ class Ajax extends CI_Controller
                 $no_kontak = $post['no_kontak'];
                 $c_kontak = count($nama_kontak);
 
+                if ($c_kontak <= 0 || $nama_kontak == null || $no_kontak == null) {
+                    $out = [
+                        'status' => false,
+                        'msg' =>  'Harap isi bagian kontak',
+                        'type' => 'result',
+                        'token' => $this->security->get_csrf_hash()
+                    ];
+                    echo json_encode($out);
+                    die;
+                }
+
                 $post_kontak = [];
                 for ($i = 0; $i < $c_kontak; $i++) {
                     $row = [
@@ -684,9 +698,10 @@ class Ajax extends CI_Controller
                 $data_kontak = json_encode($post_kontak);
 
 
-                $config['upload_path'] = './uploads/';
+                $config['upload_path'] = './assets/img/';
                 $config['allowed_types'] = 'gif|jpg|png|jpeg';
                 $this->load->library('upload', $config);
+                $this->upload->initialize($config);
                 if ($this->upload->do_upload('foto_kost')) {
                     $file = $this->upload->data('file_name');
                 } else {
@@ -731,8 +746,72 @@ class Ajax extends CI_Controller
                 die;
                 break;
             case 'edit':
+                $nama_kontak = $post['nama_kontak'];
+                $no_kontak = $post['no_kontak'];
+                $c_kontak = count($nama_kontak);
+
+                if ($c_kontak <= 0 || $nama_kontak == null || $no_kontak == null) {
+                    $out = [
+                        'status' => false,
+                        'msg' =>  'Harap isi bagian kontak',
+                        'type' => 'result',
+                        'token' => $this->security->get_csrf_hash()
+                    ];
+                    echo json_encode($out);
+                    die;
+                }
+                $post_kontak = [];
+                for ($i = 0; $i < $c_kontak; $i++) {
+                    $row = [
+                        'name' => $nama_kontak[$i],
+                        'no' => $no_kontak[$i]
+                    ];
+                    $post_kontak[] = $row;
+                }
+                $data_kontak = json_encode($post_kontak);
+
+
+                $foto_kost = $_FILES['foto_kost']['name'];
+                $get_data = $this->db->get_where('kost', ['id' => $id])->row();
+                if ($foto_kost != null || $foto_kost != '') {
+                    $config['upload_path'] = './assets/img/';
+                    $config['allowed_types'] = 'gif|jpg|png|jpeg';
+                    $this->load->library('upload', $config);
+                    $this->upload->initialize($config);
+                    if ($this->upload->do_upload('foto_kost')) {
+                        if ($get_data->foto != 'default.png') {
+
+                            unlink(FCPATH . 'assets/img/' . $get_data->foto);
+                        }
+                        $data_foto = $this->upload->data('file_name');
+                    } else {
+                        $out = [
+                            'status' => false,
+                            'msg' =>  $this->upload->display_errors(),
+                            'type' => 'result',
+                            'token' => $this->security->get_csrf_hash()
+                        ];
+                        echo json_encode($out);
+                        die;
+                    }
+                } else {
+                    if ($get_data->foto == '' || $get_data->foto == null) {
+                        $data_foto = 'default.png';
+                    } else {
+                        $data_foto = $get_data->foto;
+                    }
+                }
+
+
+
+
+
+
                 $data = [
-                    'kost_name' => $post['kost']
+                    'kost_name' => $post['kost'],
+                    'alamat' => $post['alamat'],
+                    'foto' => $data_foto,
+                    'kontak' => $data_kontak
                 ];
                 $this->db->where('id', $id)->update('kost', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -757,6 +836,43 @@ class Ajax extends CI_Controller
                 die;
                 break;
         }
+    }
+
+    public function get_data_kost()
+    {
+        cek_ajax();
+        $post = $this->input->post(null, true);
+        $id = $post['id'];
+        $get_data = $this->db->get_where('kost', ['id' => $id])->row();
+
+
+
+        if ($get_data) {
+
+            if ($get_data->kontak == null || $get_data->kontak == '') {
+                $data_kontak = null;
+            } else {
+                $data_kontak = json_decode($get_data->kontak);
+            }
+
+            $data = [
+                'alamat' => $get_data->alamat,
+                'foto' => base_url('assets/img/') . $get_data->foto,
+                'kontak' => $data_kontak
+            ];
+        } else {
+            $data = [
+                'alamat' => null,
+                'foto' => null,
+                'kontak' => null
+            ];
+        }
+
+        $arr_token = [
+            'token' => $this->security->get_csrf_hash()
+        ];
+        $output = array_merge($arr_token, $data);
+        echo json_encode($output);
     }
 
     public function delete_kost()
