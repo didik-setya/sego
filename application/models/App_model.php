@@ -17,8 +17,10 @@ class App_model extends CI_Model
         return $data;
     }
 
-    public function query_all_data_penghuni($status = null, $month = null, $year = null)
+    public function query_all_data_penghuni($year_a, $year_b)
     {
+        $kost_id = $this->session->userdata('kost_id');
+
         $this->db->select('
         penghuni.id AS id_penghuni,
         penghuni.nama_penghuni,
@@ -32,8 +34,11 @@ class App_model extends CI_Model
 
             ->from('kamar')
             ->join('penghuni', 'kamar.id = penghuni.id_kamar', 'RIGHT OUTER')
-            ->where('penghuni.status', $status);
-
+            ->where('penghuni.id_kost', $kost_id)
+            ->where('penghuni.status !=', 0)
+            ->where("penghuni.tgl_pemesanan BETWEEN '$year_a' AND '$year_b'")
+            ->or_where("penghuni.tgl_penempatan BETWEEN '$year_a' AND '$year_b'")
+            ->or_where("penghuni.tgl_keluar BETWEEN '$year_a' AND '$year_b'");
 
         $data = $this->db->get();
         return $data;

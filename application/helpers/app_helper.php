@@ -39,11 +39,11 @@ function access_page($url = null)
 
 function cek_tgl($tgl = null)
 {
-    if ($tgl != null || $tgl != '' || $tgl != '0000-00-00') {
+    if ($tgl == null || $tgl == '' || $tgl == '0000-00-00') {
+        $st = '-';
+    } else {
         $t = date_create($tgl);
         $st = date_format($t, 'd/m/Y');
-    } else {
-        $st = '-';
     }
     return $st;
 }

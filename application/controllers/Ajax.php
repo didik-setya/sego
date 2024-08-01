@@ -1187,99 +1187,237 @@ class Ajax extends CI_Controller
     public function get_data_report()
     {
         cek_ajax();
-        $periode = $this->input->post('periode');
-        $create_date = date_create($periode);
-        $month = date_format($create_date, 'm');
-        $year = date_format($create_date, 'Y');
+        $periode_a = $this->input->post('periode_a');
+        $periode_b = $this->input->post('periode_b');
+        $kost_id = $this->session->userdata('kost_id');
 
-        $penghuni_aktif = $this->app->query_all_data_penghuni(2)->result();
-        $pengeluaran = $this->db->where([
-            'month(tanggal)' => $month,
-            'year(tanggal)' => $year
-        ])
+
+        $pengeluaran = $this->db->where("tanggal BETWEEN '$periode_a' AND '$periode_b'")
+            ->where('id_kost', $kost_id)
             ->order_by('tanggal', 'ASC')
             ->get('pengeluaran')->result();
 
-        $setoran = $this->db->where([
-            'month(tanggal)' => $month,
-            'year(tanggal)' => $year
-        ])
+        $setoran = $this->db->where("tanggal BETWEEN '$periode_a' AND '$periode_b'")
+            ->where('id_kost', $kost_id)
             ->order_by('tanggal', 'ASC')
             ->get('setoran')->result();
 
-        $data_pembayaran = [];
-        $data_pengeluaran = [];
-        $data_setoran = [];
+        $penghuni_aktif = $this->app->query_all_data_penghuni($periode_a, $periode_b)->result();
 
-        foreach ($penghuni_aktif as $pa) {
-            $pembayaran = $this->db->get_where('pembayaran', [
-                'id_penghuni' => $pa->id_penghuni,
-                'periode' => $periode
-            ])->row();
 
-            if ($pembayaran) {
-                $class = '';
-                $tgl_bayar = cek_tgl($pembayaran->tgl_bayar);
-                $jml_bayar = number_format($pembayaran->jml_bayar);
-                $via = $pembayaran->via_pembayaran;
-                $ket = $pembayaran->ket;
-            } else {
-                $class = 'class="bg-danger text-light"';
-                $tgl_bayar = '-';
-                $jml_bayar = '-';
-                $via = '-';
-                $ket = '-';
+        $table_pemasukan = '';
+        $table_pengeluaran = '';
+        $table_setoran = '';
+
+        $total_pemasukan_real = 0;
+        $total_pemasukan_seharusnya = 0;
+        $total_pengeluaran = 0;
+        $total_setoran = 0;
+
+        if (!empty($pengeluaran)) {
+            $no = 1;
+            foreach ($pengeluaran as $d) {
+                $tgl = cek_tgl($d->tanggal);
+                $nominal = number_format($d->nominal);
+                $total_pengeluaran += $d->nominal;
+                $table_pengeluaran .= '
+                    <tr style="background-color: #FDE9D9; color: black;">
+                        <td>' . $no++ . '</td>
+                        <td>' . $tgl . '</td>
+                        <td>' . $d->biaya . '</td>
+                        <td>' . $nominal . '</td>
+                        <td>' . $d->ket . '</td>
+                    </tr>
+                ';
             }
-
-            $tgl_m = date_create($pa->tgl_penempatan);
-            $tgl_bayar_seharusnya = date_format($tgl_m, 'd');
-
-            $row = [
-                'tgl_seharusnya_bayar' => $tgl_bayar_seharusnya,
-                'tgl_bayar' => $tgl_bayar,
-                'no_kamar' => $pa->no_kamar,
-                'nama' => $pa->nama_penghuni,
-                'harga_kamar' => number_format($pa->price),
-                'bayar' => $jml_bayar,
-                'via' => $via,
-                'ket' => $ket,
-                'class' => $class
-            ];
-            $data_pembayaran[] = $row;
+        } else {
+            $table_pengeluaran = '<tr style="background-color: #FDE9D9; color: black;"><td class="text-center" colspan="5">No data result</td></tr>';
+            $total_pengeluaran = 0;
         }
 
-        foreach ($pengeluaran as $p) {
-            $tgl = cek_tgl($p->tanggal);
-            $nominal = number_format($p->nominal);
-            $row = [
-                'tanggal' => $tgl,
-                'biaya' => $p->biaya,
-                'nominal' => $nominal,
-                'ket' => $p->ket
-            ];
-            $data_pengeluaran[] = $row;
+
+        if (!empty($setoran)) {
+            $no = 1;
+            foreach ($setoran as $d) {
+                $tgl = cek_tgl($d->tanggal);
+                $nominal = number_format($d->nominal);
+                $total_setoran += $d->nominal;
+                $table_setoran .= '
+                    <tr style="background-color: #E6B8B7; color: black;">
+                        <td>' . $no++ . '</td>
+                        <td>' . $tgl . '</td>
+                        <td>' . $d->ket . '</td>
+                        <td>' . $nominal . '</td>
+                    </tr>
+                ';
+            }
+        } else {
+            $table_setoran = '<tr style="background-color: #E6B8B7; color: black;"><td class="text-center" colspan="4">No data result</td></tr>';
+            $total_setoran = 0;
         }
 
-        foreach ($setoran as $s) {
-            $tgl = cek_tgl($s->tanggal);
-            $nominal = number_format($s->nominal);
-            $row = [
-                'tanggal' => $tgl,
-                'nominal' => $nominal,
-                'ket' => $s->ket
-            ];
-            $data_setoran[] = $row;
+        if (!empty($penghuni_aktif)) {
+            $no = 1;
+            foreach ($penghuni_aktif as $d) {
+                $c_periode_a = date_create($periode_a);
+                $c_periode_b = date_create($periode_b);
+
+                $periode_a = date_format($c_periode_a, 'Y-m');
+                $periode_b = date_format($c_periode_b, 'Y-m');
+
+
+                $data_pembayaran = $this->db
+                    ->where('id_penghuni', $d->id_penghuni)
+                    ->where("periode BETWEEN '$periode_a' AND '$periode_b'")
+                    ->get('pembayaran')
+                    ->row();
+
+                if (!empty($data_pembayaran)) {
+                    $tgl_bayar = cek_tgl($data_pembayaran->tgl_bayar);
+                    $jml_bayar = number_format($data_pembayaran->jml_bayar);
+                    $via = $data_pembayaran->via_pembayaran;
+                    $ket = $data_pembayaran->ket;
+                    $c_jml_bayar = $data_pembayaran->jml_bayar;
+                } else {
+                    $tgl_bayar = '-';
+                    $jml_bayar = '-';
+                    $via = '-';
+                    $ket = '-';
+                    $c_jml_bayar = 0;
+                }
+
+
+                if ($d->status_penghuni == 1) {
+                    $style = 'style="background: #FFFF00; color: black;"';
+                } else if ($d->status_penghuni == 2) {
+                    $style = 'style="background: #D8E4BC; color: black;"';
+                } else if ($d->status_penghuni == 3) {
+                    $style = 'style="background: #cf795f; color: black;"';
+                } else {
+                    $style = '';
+                }
+
+                $tgl_harusnya = cek_tgl($d->tgl_penempatan);
+
+
+                $total_pemasukan_real += $c_jml_bayar;
+                $total_pemasukan_seharusnya += $d->price;
+
+                $table_pemasukan .= '
+                    <tr ' . $style . '>
+                        <td>' . $no++ . '</td>
+                        <td>' . $tgl_harusnya . '</td>
+                        <td>' . $tgl_bayar . '</td>
+
+                        <td>' . $d->no_kamar . '</td>
+                        <td>' . $d->nama_penghuni . '</td>
+                        <td>' . number_format($d->price) . '</td>
+                        <td>' . $jml_bayar . '</td>
+                        <td>' . $via . '</td>
+                        <td>' . $ket . '</td>
+                    </tr>
+                ';
+            }
+        } else {
+            $table_pemasukan = '
+                <tr class="text-white" style="background: #9BBB59;">
+                    <td class="text-center" colspan="9">No data result</td>
+                </tr>
+            ';
+            $total_pemasukan_real = 0;
+            $total_pemasukan_seharusnya = 0;
         }
 
-        $data = [
-            'pembayaran' => $data_pembayaran,
-            'pengeluaran' => $data_pengeluaran,
-            'setoran' => $data_setoran
-        ];
+        $selisih_pemasukan = $total_pemasukan_seharusnya - $total_pemasukan_real;
 
-        $arr_token = ['token' => $this->security->get_csrf_hash()];
-        $output = array_merge($data, $arr_token);
-        echo json_encode($output);
+        $table = '
+                    <table class="table table-sm table-bordered my-2">
+                        <thead>
+                            <tr>
+                                <th colspan="5"><u class="text-dark">Pemasukan</u></th>
+                            </tr>
+                            <tr class="text-white" style="background: #9BBB59;">
+                                <th>#</th>
+                                <th>Tgl Seharusnya Bayar</th>
+                                <th>Tgl Bayar</th>
+                                <th>No. Kamar</th>
+                                <th>Nama</th>
+                                <th>Harga Kamar</th>
+                                <th>Bayar</th>
+                                <th>Via</th>
+                                <th>Ket</th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            ' . $table_pemasukan . '
+                        </tbody>
+                        <tfoot>
+                            <tr class="text-white" style="background: #9BBB59;">
+                                <th colspan="5" class="text-center">Total</th>
+                                <th>' . number_format($total_pemasukan_seharusnya) . '</th>
+                                <th>' . number_format($total_pemasukan_real) . '</th>
+                                <th colspan="2"></th>
+                            </tr>
+                            <tr class="text-white" style="background: #9BBB59;">
+                                <th colspan="5" class="text-center">Selisih</th>
+                                <th colspan="2">' . number_format($selisih_pemasukan) . '</th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table class="table table-sm table-bordered my-2">
+                        <thead>
+                            <tr>
+                                <th colspan="5"><u class="text-dark">Pengeluaran</u></th>
+                            </tr>
+                            <tr class="text-white" style="background: #F79646;">
+                                <th>#</th>
+                                <th>Tanggal</th>
+                                <th>Biaya</th>
+                                <th>Nominal</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ' . $table_pengeluaran . '
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color: #F79646; color: white;">
+                                <th  colspan="3" class="text-right">Total</th>
+                                <th>' . number_format($total_pengeluaran) . '</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table class="table table-sm table-bordered my-2">
+                        <thead>
+                            <tr>
+                                <th colspan="5"><u class="text-dark">Setoran</u></th>
+                            </tr>
+                            <tr class="text-white" style="background: #C0504D; color: black;">
+                                <th>#</th>
+                                <th>Tanggal</th>
+                                <th>Setor</th>
+                                <th>Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ' . $table_setoran . '
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color: #C0504D; color: white;">
+                                <th  colspan="3" class="text-right">Total</th>
+                                <th>' . number_format($total_setoran) . '</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+        ';
+
+        $arr_token = ['token' => $this->security->get_csrf_hash(), 'html' => $table];
+        echo json_encode($arr_token);
     }
     //end ajax report
 
