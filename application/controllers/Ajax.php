@@ -1547,4 +1547,45 @@ class Ajax extends CI_Controller
         echo json_encode($output);
     }
     //end ajax settings
+
+
+    //get data for dashboard
+    public function data_dashboard()
+    {
+        cek_ajax();
+        $this_month = date('m');
+        $this_year = date('Y');
+
+        $kost_id = $this->session->userdata('kost_id');
+        $jml_kost = $this->db->get_where('kamar', ['id_kost' => $kost_id])->num_rows();
+        $jml_penghuni = $this->db->get_where('penghuni', ['id_kost' => $kost_id, 'status' => 2])->num_rows();
+        $jml_pengeluaran = $this->db->select('SUM(nominal) AS jml')
+            ->from('pengeluaran')
+            ->where([
+                'id_kost' => $kost_id,
+                'month(tanggal)' => $this_month,
+                'year(tanggal)' => $this_year
+            ])
+            ->get()->row();
+        $jml_pemasukan = $this->db->select('SUM(jml_bayar) AS jml')
+            ->from('pembayaran')
+            ->join('penghuni', 'pembayaran.id_penghuni = penghuni.id')
+            ->where([
+                'penghuni.id_kost' => $kost_id,
+                'month(pembayaran.tgl_bayar)' => $this_month,
+                'year(pembayaran.tgl_bayar)' => $this_year
+            ])->get()->row();
+
+
+        $output = [
+            'token' => $this->security->get_csrf_hash(),
+            'jml_kost' => $jml_kost,
+            'jml_penghuni' => $jml_penghuni,
+            'jml_pengeluaran' => $jml_pengeluaran->jml,
+            'jml_pemasukan' => $jml_pemasukan->jml
+        ];
+
+        echo json_encode($output);
+    }
+    //end get data
 }

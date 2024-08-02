@@ -110,3 +110,5 @@ $route['access_kost'] = 'ajax/access_kost';
 $route['settings'] = 'dashboard/settings';
 $route['validate_settings']['POST'] = 'ajax/validation_settings';
 $route['valid_password']['POST'] = 'ajax/validation_password';
+
+$route['data_dashboard']['POST'] = 'ajax/data_dashboard';
