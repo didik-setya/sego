@@ -1289,19 +1289,23 @@ class Ajax extends CI_Controller
 
                 if ($d->status_penghuni == 1) {
                     $style = 'style="background: #FFFF00; color: black;"';
+                    $c_real_pemasukan = $d->price;
                 } else if ($d->status_penghuni == 2) {
                     $style = 'style="background: #D8E4BC; color: black;"';
+                    $c_real_pemasukan = $d->price;
                 } else if ($d->status_penghuni == 3) {
                     $style = 'style="background: #cf795f; color: black;"';
+                    $c_real_pemasukan = 0;
                 } else {
                     $style = '';
+                    $c_real_pemasukan = 0;
                 }
 
                 $tgl_harusnya = cek_tgl($d->tgl_penempatan);
 
 
                 $total_pemasukan_real += $c_jml_bayar;
-                $total_pemasukan_seharusnya += $d->price;
+                $total_pemasukan_seharusnya += $c_real_pemasukan;
 
                 $table_pemasukan .= '
                     <tr ' . $style . '>

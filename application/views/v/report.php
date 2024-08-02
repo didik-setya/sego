@@ -84,12 +84,14 @@
     })
 
     $('#export_data').click(() => {
-        let periode = $('#periode').val()
+        let periode_a = $('#periode_a').val()
+        let periode_b = $('#periode_b').val()
 
-        if (periode == '') {
-            error_alert('Harap pilih periode')
+
+        if (periode_a && periode_b) {
+            window.open('<?= base_url('excel/index?date_a=') ?>' + periode_a + '&date_b=' + periode_b);
         } else {
-            window.open('<?= base_url('export/export_data?periode=') ?>' + periode);
+            error_alert('Harap pilih periode')
         }
     })
 
