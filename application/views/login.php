@@ -7,10 +7,28 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
 
-    <title>Login</title>
+
+    <!-- Primary Meta Tags -->
+    <title>Sistem Management Kost (SEGO) | Login Page</title>
+    <meta name="title" content="Sistem Management Kost (SEGO) | Login Page" />
+    <meta name="description" content="Selamat Datang. Silahkan Login Terlebih Dahulu" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<?= base_url() ?>" />
+    <meta property="og:title" content="Sistem Management Kost (SEGO) | Login Page" />
+    <meta property="og:description" content="Selamat Datang. Silahkan Login Terlebih Dahulu" />
+    <meta property="og:image" content="<?= base_url() ?>assets/logo.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="<?= base_url() ?>" />
+    <meta property="twitter:title" content="Sistem Management Kost (SEGO) | Login Page" />
+    <meta property="twitter:description" content="Selamat Datang. Silahkan Login Terlebih Dahulu" />
+    <meta property="twitter:image" content="<?= base_url() ?>assets/logo.jpg" />
+
+    <link rel="shortcut icon" href="<?= base_url() ?>assets/logo.jpg">
 
     <!-- Custom fonts for this template-->
     <link href="<?= base_url('assets/') ?>vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

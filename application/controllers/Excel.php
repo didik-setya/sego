@@ -460,9 +460,14 @@ class Excel extends CI_Controller
 
         //end body setoran
 
+        $kost_name = $this->session->userdata('kost_name');
+        $filename = $kost_name . ' ' . $show_periode . '.xlsx';
+
+
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         //make it an attachment so we can define filename
-        header('Content-Disposition: attachment;filename="Report.xlsx"');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
     }
