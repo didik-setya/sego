@@ -112,3 +112,10 @@ $route['validate_settings']['POST'] = 'ajax/validation_settings';
 $route['valid_password']['POST'] = 'ajax/validation_password';
 
 $route['data_dashboard']['POST'] = 'ajax/data_dashboard';
+
+
+$route['transaction'] = 'dashboard/transaction';
+
+$route['load_data_transaksi'] = 'ajax/data_transaksi';
+$route['get_data_pengeluaran'] = 'ajax/data_pengeluaran';
+$route['get_data_setoran'] = 'ajax/data_setoran';

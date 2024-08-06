@@ -137,4 +137,18 @@ class Dashboard extends CI_Controller
         ];
         $this->load->view('dashboard', $data);
     }
+
+
+    public function transaction()
+    {
+        $url = $this->uri->segment(1);
+        access_page($url);
+        $kost_id = $this->session->userdata('kost_id');
+        $data = [
+            'title' => 'Transaksi',
+            'view' => 'v/transaction',
+            'penghuni' => $this->app->get_all_data_pelanggan($kost_id)->result()
+        ];
+        $this->load->view('dashboard', $data);
+    }
 }

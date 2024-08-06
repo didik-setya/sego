@@ -1588,4 +1588,44 @@ class Ajax extends CI_Controller
         echo json_encode($output);
     }
     //end get data
+
+
+
+    //data transaksi
+    public function data_transaksi()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+        $data = $this->app->get_data_pemasukan(null, $id)->row();
+        $output = [
+            'token' => $this->security->get_csrf_hash(),
+            'data' => $data
+        ];
+        echo json_encode($output);
+    }
+
+    public function data_pengeluaran()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+        $data = $this->db->get_where('pengeluaran', ['id' => $id])->row();
+        $output = [
+            'data' => $data,
+            'token' => $this->security->get_csrf_hash(),
+        ];
+        echo json_encode($output);
+    }
+
+    public function data_setoran()
+    {
+        cek_ajax();
+        $id = $this->input->post('id');
+        $data = $this->db->get_where('setoran', ['id' => $id])->row();
+        $output = [
+            'data' => $data,
+            'token' => $this->security->get_csrf_hash(),
+        ];
+        echo json_encode($output);
+    }
+    //end data transaksi
 }

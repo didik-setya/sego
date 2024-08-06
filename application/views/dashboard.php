@@ -55,6 +55,8 @@ $c_kost = count($to_kost);
     <link href="<?= base_url('assets/') ?>vendor/sweetalert/dist/sweetalert2.min.css" rel="stylesheet">
     <link href="<?= base_url('assets/') ?>vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="<?= base_url() ?>assets/select2/dist/css/select2.min.css">
+
     <script src="<?= base_url('assets/') ?>vendor/jquery/jquery.min.js"></script>
     <style>
         .modal-open .modal-backdrop {
@@ -241,6 +243,7 @@ $c_kost = count($to_kost);
     <!-- Page level plugins -->
     <script src="<?= base_url('assets/') ?>vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="<?= base_url('assets/') ?>vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="<?= base_url() ?>assets/select2/dist/js/select2.min.js"></script>
 
     <script>
         function change_kost() {

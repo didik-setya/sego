@@ -7,6 +7,7 @@ class App_model extends CI_Model
         $this->db->select('
             kamar.no_kamar,
             kamar.km,
+            kamar.price,
             penghuni.*
         ')
             ->from('penghuni')
@@ -51,6 +52,50 @@ class App_model extends CI_Model
             ->from('kost')
             ->join('access_kost', 'kost.id = access_kost.id_kost')
             ->where('access_kost.id_user', $id);
+        $data = $this->db->get()->result();
+        return $data;
+    }
+
+    public function get_data_pemasukan($periode = null, $id_pembayaran = null)
+    {
+        $kost_id = $this->session->userdata('kost_id');
+
+        $this->db->select('
+            penghuni.nama_penghuni,
+            penghuni.tgl_penempatan,
+            penghuni.status,
+            penghuni.id AS id_penghuni,
+            kamar.*,
+            pembayaran.*,
+            pembayaran.id AS id_pembayaran
+        ')
+            ->from('penghuni')
+            ->join('kamar', 'penghuni.id_kamar = kamar.id')
+            ->join('pembayaran', 'penghuni.id = pembayaran.id_penghuni')
+            ->where('penghuni.id_kost', $kost_id);
+
+        if ($periode) {
+            $this->db->where('pembayaran.periode', $periode);
+        }
+
+        if ($id_pembayaran) {
+            $this->db->where('pembayaran.id', $id_pembayaran);
+        }
+
+        $data = $this->db->get();
+        return $data;
+    }
+
+    public function get_penghuni_not_pay($data_penghuni = null)
+    {
+        $status = [1, 2];
+        $this->db->select('penghuni.*, kamar.*')
+            ->from('penghuni')
+            ->join('kamar', 'penghuni.id_kamar = kamar.id')
+            ->where_in('penghuni.status', $status);
+        if ($data_penghuni) {
+            $this->db->where_not_in('penghuni.id', $data_penghuni);
+        }
         $data = $this->db->get()->result();
         return $data;
     }

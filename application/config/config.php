@@ -461,7 +461,7 @@ $config['csrf_token_name'] = '_csrf';
 $config['csrf_cookie_name'] = '_token';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array();
+$config['csrf_exclude_uris'] = array('load_data_transaksi');
 
 /*
 |--------------------------------------------------------------------------

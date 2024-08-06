@@ -34,24 +34,15 @@ return [
             'url' => 'penghuni',
             'access' => ['admin', 'user']
         ],
+
         [
-            'nama_menu' => 'Pengeluaran',
-            'icon' => '<i class="fas fa-money-bill-wave-alt"></i>',
-            'url' => 'pengeluaran',
-            'access' => ['admin', 'user']
-        ],
-        [
-            'nama_menu' => 'Setoran',
-            'icon' => '<i class="fas fa-hand-holding-usd"></i>',
-            'url' => 'setoran',
-            'access' => ['admin', 'user']
-        ],
-        [
-            'nama_menu' => 'Laporan',
+            'nama_menu' => 'Transaksi',
             'icon' => '<i class="fas fa-folder-open"></i>',
-            'url' => 'report',
+            'url' => 'transaction',
             'access' => ['admin', 'user']
         ],
+
+
 
     ]
 ];
