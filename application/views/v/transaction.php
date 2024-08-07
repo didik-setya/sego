@@ -86,6 +86,9 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                             $data_pay = $this->app->get_data_pemasukan($periode)->result();
                             $i = 1;
                             $id_pay = [];
+                            $t_est_pay = 0;
+                            $t_real_pay = 0;
+
                             foreach ($data_pay as $d) {
                                 $row = $d->id_penghuni;
                                 $id_pay[] = $row;
@@ -97,6 +100,9 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                 }
 
                                 $tgl_bayar = cek_tgl($d->tgl_bayar);
+
+                                $t_est_pay += $d->price;
+                                $t_real_pay += $d->jml_bayar;
                             ?>
                                 <tr>
                                     <td><?= $i++ ?></td>
@@ -130,6 +136,7 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                     $tgl = date_create($d->tgl_penempatan);
                                     $tgl_pembayaran = date_format($tgl, 'd');
                                 }
+                                $t_est_pay += $d->price;
                             ?>
                                 <tr>
                                     <td><?= $i++ ?></td>
@@ -143,7 +150,22 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                     <td>-</td>
                                     <td>-</td>
                                 </tr>
-                            <?php } ?>
+                            <?php }
+                            $selisih_pay = $t_est_pay - $t_real_pay;
+                            ?>
+                        </tbody>
+                        <tbody>
+                            <tr class="bg-success text-white">
+                                <th colspan="5">Total</th>
+                                <th><?= number_format($t_est_pay) ?></th>
+                                <th><?= number_format($t_real_pay) ?></th>
+                                <th colspan="3"></th>
+                            </tr>
+                            <tr class="bg-success text-white">
+                                <th colspan="5">Selisih</th>
+                                <th colspan="2"><?= number_format($selisih_pay) ?></th>
+                                <th colspan="3"></th>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -173,7 +195,9 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                         <tbody>
                             <?php
                             $no = 1;
+                            $total_pengeluaran = 0;
                             foreach ($data_pengeluaran as $dp) {
+                                $total_pengeluaran += $dp->nominal;
                             ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
@@ -195,6 +219,12 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                 </tr>
                             <?php } ?>
                         </tbody>
+                        <tfoot>
+                            <tr class="bg-success text-white">
+                                <th colspan="3">Total</th>
+                                <th colspan="3"><?= number_format($total_pengeluaran) ?></th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -218,7 +248,9 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                 <tbody>
                     <?php
                     $n = 1;
+                    $total_setoran = 0;
                     foreach ($data_setoran as $ds) {
+                        $total_setoran += $ds->nominal;
                     ?>
                         <tr>
                             <td><?= $n++ ?></td>
@@ -239,13 +271,18 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                         </tr>
                     <?php } ?>
                 </tbody>
+                <tfoot>
+                    <tr class="bg-success text-white">
+                        <th colspan="2">Total</th>
+                        <th colspan="3"><?= number_format($total_setoran) ?></th>
+                    </tr>
+                </tfoot>
             </table>
 
         </div>
     </div>
 
 </div>
-<!-- <?php var_dump($id_pay) ?> -->
 
 
 

@@ -33,7 +33,7 @@
                 </div>
 
                 <?php foreach ($access as $a) { ?>
-                    <div class="col-12 col-md-4 col-lg-3">
+                    <div class="col-12 col-md-4 col-lg-3 my-2">
                         <div class="card">
                             <div class="card-body bg-primary text-light">
                                 <h6 class="text-center my-3">
