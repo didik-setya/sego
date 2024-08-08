@@ -629,6 +629,8 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
         $('#penghuni_name').addClass('d-none')
         $('#penghuni_name').val('')
         $('#id_penghuni').val('')
+
+        $('#penghuni_kost').attr('required', true);
     }
 
     function edit_pembayaran(id) {
@@ -646,6 +648,7 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
 
         $('#err_jumlah').html('')
         $('#err_via').html('')
+        $('#penghuni_kost').removeAttr('required');
 
         loading()
         $.ajax({

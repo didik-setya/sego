@@ -89,9 +89,11 @@ class App_model extends CI_Model
     public function get_penghuni_not_pay($data_penghuni = null)
     {
         $status = [1, 2];
+        $kost_id = $this->session->userdata('kost_id');
         $this->db->select('penghuni.*, kamar.*')
             ->from('penghuni')
             ->join('kamar', 'penghuni.id_kamar = kamar.id')
+            ->where('penghuni.id_kost', $kost_id)
             ->where_in('penghuni.status', $status);
         if ($data_penghuni) {
             $this->db->where_not_in('penghuni.id', $data_penghuni);

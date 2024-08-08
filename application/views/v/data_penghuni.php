@@ -27,7 +27,6 @@ $role = $this->session->userdata('role');
 
                             <?php $i = 1;
                             foreach ($data as $d) {
-                                $hash_id = md5(sha1($d->id));
                             ?>
                                 <tr>
                                     <td><?= $i++ ?></td>
@@ -63,7 +62,6 @@ $role = $this->session->userdata('role');
                                                     <a class="dropdown-item" href="#" onclick="edit_data('<?= $d->id ?>', '<?= $d->id_kamar ?>', '<?= $d->nama_penghuni ?>', '<?= $d->status ?>', '<?= $d->alamat ?>')"><i class="fa fa-edit"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" onclick="delete_penghuni('<?= $d->id ?>')"><i class="fa fa-trash"></i> Hapus</a>
                                                 <?php } ?>
-                                                <a class="dropdown-item" href="<?= base_url('payment?id=' . $hash_id) ?>"><i class="fas fa-money-bill-wave"></i> Pembayaran</a>
                                             </div>
                                         </div>
                                     </td>

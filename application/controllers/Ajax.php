@@ -356,7 +356,7 @@ class Ajax extends CI_Controller
             case 'add':
 
                 $data = [
-                    'id_penghuni' => $post['penghuni'],
+                    'id_penghuni' => $post['penghuni_kost'],
                     'periode' => $post['periode'],
                     'tgl_bayar' => $post['tgl'],
                     'jml_bayar' => $post['jumlah'],
