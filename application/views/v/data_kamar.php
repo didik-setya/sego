@@ -125,6 +125,8 @@ $role = $this->session->userdata('role');
                     <select name="status" id="status" class="form-control">
                         <option value="">--pilih--</option>
                         <option value="1">Tersedia</option>
+                        <option value="2">Di Pesan</option>
+                        <option value="3">Di Tempati</option>
                         <option value="4">Renovasi</option>
                         <option value="0">Nonaktif</option>
                     </select>

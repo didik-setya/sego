@@ -282,6 +282,16 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
         </div>
     </div>
 
+    <?php
+    $laba_rugi = $t_real_pay - $total_pengeluaran;
+    ?>
+    <table class="table table-bordered table-sm mt-3 w-100">
+        <tr class="text-light bg-primary">
+            <td>Laba (Rugi)</td>
+            <td><?= number_format($laba_rugi) ?></td>
+        </tr>
+    </table>
+
 </div>
 
 
@@ -344,7 +354,16 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
 
                 <div class="form-group col-md-6">
                     <label><b>Via Pembayaran</b></label>
-                    <input type="text" name="via" id="via_pembayaran" class="form-control" required>
+                    <!-- <input type="text" name="via" id="via_pembayaran" class="form-control" required> -->
+                    <select name="via" id="via_pembayaran" class="form-control" required>
+                        <option value="">--pilih--</option>
+                        <?php
+                        $payment = $this->config->item('pembayaran');
+                        foreach ($payment as $p) {
+                        ?>
+                            <option value="<?= $p ?>"><?= $p ?></option>
+                        <?php } ?>
+                    </select>
                     <small class="text-danger" id="err_via"></small>
                 </div>
 
