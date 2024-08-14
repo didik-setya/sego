@@ -71,10 +71,11 @@ class Ajax extends CI_Controller
 
                 $status = $this->input->post('status', true);
 
-                if ($status != 0 || $status != 1 || $status != 4 || $status != null || $status != '') {
+                if ($status != 0 || $status != null || $status != '') {
                     $data = [
                         'no_kamar' => $this->input->post('kamar', true),
                         'km' => $this->input->post('km', true),
+                        'status' => $status,
                         'price' => $this->input->post('price'),
                         'last_update' => date('Y-m-d H:i:s'),
                         'lokasi_gedung' => $this->input->post('lokasi', true),
@@ -84,7 +85,6 @@ class Ajax extends CI_Controller
                     $data = [
                         'no_kamar' => $this->input->post('kamar', true),
                         'km' => $this->input->post('km', true),
-                        'status' => $status,
                         'price' => $this->input->post('price'),
                         'last_update' => date('Y-m-d H:i:s'),
                         'lokasi_gedung' => $this->input->post('lokasi', true),
