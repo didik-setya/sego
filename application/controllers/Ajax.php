@@ -329,8 +329,8 @@ class Ajax extends CI_Controller
     public function valid_payment()
     {
         cek_ajax();
-        $this->form_validation->set_rules('jumlah', 'Jumlah pembayaran', 'required|trim|numeric');
-        $this->form_validation->set_rules('via', 'Via pembayaran', 'required|trim');
+        $this->form_validation->set_rules('jumlah', 'Jumlah pembayaran', 'trim|numeric');
+        $this->form_validation->set_rules('via', 'Via pembayaran', 'trim');
 
         if ($this->form_validation->run() == false) {
             $params = [
@@ -349,19 +349,61 @@ class Ajax extends CI_Controller
     private function act_payment()
     {
         $post = $this->input->post(null, true);
-        $id = $post['id'];
-        $act = $post['act'];
+        $id = $this->input->post('id', true);
+        $act = $this->input->post('act', true);
+
+
 
         switch ($act) {
             case 'add':
+                $bukti = $_FILES['bukti']['name'];
+
+
+
+                if ($bukti) {
+                    $id_penghuni = $this->input->post('penghuni_kost');
+                    $periode = $this->input->post('periode');
+                    $new_filename = $id_penghuni . '_' . $periode . '_' . time();
+
+                    $config['upload_path']          = './assets/bukti/';
+                    $config['allowed_types']        = 'gif|jpg|png|jpeg|svg';
+                    $config['file_name']            = $new_filename;
+                    // $this->load->library('upload', $config);
+                    $this->upload->initialize($config);
+
+                    if ($this->upload->do_upload('bukti')) {
+                        $file_width = $this->upload->data('image_width');
+                        $file_height = $this->upload->data('image_height');
+                        $file_path = $this->upload->data('full_path');
+
+                        if ($file_height > 850 || $file_width > 850) {
+                            $this->app->resize_image($file_path, $file_width, $file_height);
+                        }
+
+                        $this->app->wm_image($file_path, $id_penghuni, $periode);
+                        $bukti_pembayaran = $this->upload->data('file_name');
+                    } else {
+                        $params = [
+                            'status' => true,
+                            'msg' => 'Pembayaran berhasil di tambahkan',
+                            'token' => $this->security->get_csrf_hash()
+                        ];
+                        echo json_encode($params);
+                        die;
+                    }
+                } else {
+                    $bukti_pembayaran = null;
+                }
+
 
                 $data = [
-                    'id_penghuni' => $post['penghuni_kost'],
-                    'periode' => $post['periode'],
-                    'tgl_bayar' => $post['tgl'],
-                    'jml_bayar' => $post['jumlah'],
-                    'via_pembayaran' => $post['via'],
-                    'ket' => $post['ket']
+                    'id_penghuni' => $this->input->post('penghuni_kost'),
+                    'periode' => $this->input->post('periode'),
+                    'tgl_bayar' => $this->input->post('tgl'),
+                    'jml_bayar' => $this->input->post('jumlah'),
+                    'via_pembayaran' => $this->input->post('via'),
+                    'ket' => $this->input->post('ket'),
+                    'bukti' => $bukti_pembayaran
                 ];
                 $this->db->insert('pembayaran', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -375,6 +417,7 @@ class Ajax extends CI_Controller
                         'msg' => 'Pembayaran gagal di tambahkan'
                     ];
                 }
+
                 $arr_token = ['type' => 'result', 'token' => $this->security->get_csrf_hash()];
                 $output = array_merge($arr_token, $params);
 
@@ -382,13 +425,54 @@ class Ajax extends CI_Controller
                 die;
                 break;
             case 'edit':
+                $bukti = $_FILES['bukti']['name'];
+                $pembayaran = $this->db->get_where('pembayaran', ['id' => $id])->row();
+
+                if ($bukti) {
+                    $id_penghuni = $this->input->post('id_penghuni');
+                    $periode = $this->input->post('periode');
+                    $new_filename = $id_penghuni . '_' . $periode . '_' . time();
+
+                    $config['upload_path']          = './assets/bukti/';
+                    $config['allowed_types']        = 'gif|jpg|png|jpeg|svg';
+                    $config['file_name']            = $new_filename;
+                    // $this->load->library('upload', $config);
+                    $this->upload->initialize($config);
+
+                    if ($this->upload->do_upload('bukti')) {
+                        unlink(FCPATH . 'assets/bukti/' . $pembayaran->bukti);
+                        $file_width = $this->upload->data('image_width');
+                        $file_height = $this->upload->data('image_height');
+                        $file_path = $this->upload->data('full_path');
+
+                        if ($file_height > 850 || $file_width > 850) {
+                            $this->app->resize_image($file_path, $file_width, $file_height);
+                        }
+
+                        $this->app->wm_image($file_path, $id_penghuni, $periode);
+                        $bukti_pembayaran = $this->upload->data('file_name');
+                    } else {
+                        $params = [
+                            'status' => true,
+                            'msg' => 'Pembayaran berhasil di tambahkan',
+                            'token' => $this->security->get_csrf_hash()
+                        ];
+                        echo json_encode($params);
+                        die;
+                    }
+                } else {
+                    $bukti_pembayaran = $pembayaran->bukti;
+                }
+
+
 
                 $data = [
                     'periode' => $post['periode'],
                     'tgl_bayar' => $post['tgl'],
                     'jml_bayar' => $post['jumlah'],
                     'via_pembayaran' => $post['via'],
-                    'ket' => $post['ket']
+                    'ket' => $post['ket'],
+                    'bukti' => $bukti_pembayaran
                 ];
                 $this->db->where('id', $id)->update('pembayaran', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -1628,4 +1712,11 @@ class Ajax extends CI_Controller
         echo json_encode($output);
     }
     //end data transaksi
+
+
+    //get sisa saldo pengawas
+    public function get_sisa_saldo()
+    {
+        cek_ajax();
+    }
 }

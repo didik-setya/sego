@@ -101,4 +101,54 @@ class App_model extends CI_Model
         $data = $this->db->get()->result();
         return $data;
     }
+
+    public function resize_image($path, $width, $height)
+    {
+        if ($width >= 1200) {
+            $new_width = $width / 3;
+        } else if ($width < 1200) {
+            $new_width = $width / 2;
+        }
+
+        if ($height >= 1200) {
+            $new_height = $height / 3;
+        } else if ($width < 1200) {
+            $new_height = $height / 2;
+        }
+
+
+
+        $config['image_library'] = 'gd2';
+        $config['source_image'] = $path;
+        $config['width']         = $new_width;
+        $config['height']       = $new_height;
+        $config['quality'] = '70%';
+        $config['create_thumb'] = false;
+        $config['maintain_ratio'] = TRUE;
+
+        $this->load->library('image_lib', $config);
+        $this->image_lib->resize();
+    }
+
+
+    public function wm_image($path, $id_penghuni, $periode)
+    {
+        $penghuni = $this->db->get_where('penghuni', ['id' => $id_penghuni])->row();
+        $nama_penghuni = $penghuni->nama_penghuni;
+        $wm_text = $nama_penghuni . ' (' . $periode . ')';
+
+        $config['source_image'] = $path;
+        $config['wm_text'] = $wm_text;
+        $config['wm_type'] = 'text';
+        $config['wm_font_path'] = '';
+        $config['wm_font_size'] = '50';
+        $config['wm_font_color'] = 'eef52a';
+        $config['wm_vrt_alignment'] = 'bottom';
+        $config['wm_hor_alignment'] = 'left';
+        $config['wm_padding'] = '0';
+
+        $this->load->library('image_lib', $config);
+        $this->image_lib->initialize($config);
+        $this->image_lib->watermark();
+    }
 }

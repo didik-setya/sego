@@ -112,8 +112,17 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                     <td><?= $tgl_bayar ?></td>
                                     <td><?= number_format($d->price); ?></td>
                                     <td><?= number_format($d->jml_bayar) ?></td>
-                                    <td><?= $d->via_pembayaran ?></td>
+                                    <td class="text-center">
+                                        <?php
+                                        if ($d->bukti != null || $d->bukti != '') {
+                                            echo '<button data-src="' . base_url('assets/bukti/') . $d->bukti . '" class="btn btn-sm btn-primary detail_bukti">' . $d->via_pembayaran . '</button>';
+                                        } else {
+                                            echo $d->via_pembayaran;
+                                        }
+                                        ?>
+                                    </td>
                                     <td><?= $d->ket ?></td>
+
                                     <td>
                                         <?php if ($role == 'admin') { ?>
                                             <button class="btn btn-sm btn-success" onclick="edit_pembayaran('<?= $d->id_pembayaran ?>')">
@@ -290,11 +299,33 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
             <td>Laba (Rugi)</td>
             <td><?= number_format($laba_rugi) ?></td>
         </tr>
+
+
+        <?php if ($kost_id == 7) {
+            $jml_pay_cash = $this->db->select('SUM(jml_bayar) AS jml')
+                ->from('pembayaran')
+                ->join('penghuni', 'pembayaran.id_penghuni = penghuni.id')
+                ->where(['pembayaran.via_pembayaran' => 'Cash', 'penghuni.id_kost' => $kost_id])
+                ->get()->row()->jml;
+        ?>
+            <tr class="text-light bg-primary">
+                <td>Sisa Uang di Meta</td>
+                <td id="jml_sisa"><?= $jml_pay_cash ?></td>
+            </tr>
+        <?php } ?>
     </table>
 
 </div>
 
+<!-- modal Bukti -->
+<div class="modal" id="modaBukti" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
 
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
 
 <!-- Modal pembayaran -->
 <div class="modal" id="modalPembayaran" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -307,7 +338,7 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                 </button>
             </div>
 
-            <?= form_open('validation_payment', 'id="frm_pembayaran"') ?>
+            <?= form_open_multipart('ajax/valid_payment', 'id="frm_pembayaran"') ?>
             <input type="hidden" name="id" id="id_pembayaran">
             <input type="hidden" name="act" id="act_pembayaran">
             <div class="modal-body row">
@@ -365,6 +396,11 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                         <?php } ?>
                     </select>
                     <small class="text-danger" id="err_via"></small>
+                </div>
+
+                <div class="form-group col-md-12 d-none" id="form_bukti">
+                    <label><b>Bukti Pembayaran</b></label>
+                    <input type="file" name="bukti" id="bukti" class="form-control">
                 </div>
 
                 <div class="form-group col-md-12">
@@ -550,6 +586,30 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
 
 
     //pembayaran
+    $(document).on('click', '.detail_bukti', function() {
+        $('#modaBukti').modal('show')
+        let src = $(this).data('src');
+        let img = '<img src="' + src + '">';
+        $('#modaBukti').find('.modal-content').html(img);
+    })
+
+    $('#via_pembayaran').change(function(e) {
+        let v = $(this).val()
+        let act = $('#act_pembayaran').val();
+
+        if (v != 'Cash') {
+            if (act == 'add') {
+                $('#form_bukti').removeClass('d-none')
+                $('#bukti').attr('required', true)
+            } else if (act == 'edit') {
+                $('#form_bukti').removeClass('d-none')
+                $('#bukti').removeAttr('required')
+            }
+        } else {
+            $('#form_bukti').addClass('d-none')
+            $('#bukti').removeAttr('required')
+        }
+    })
 
     $('#penghuni_kost').change(function() {
         var kost = $(this).find('option:selected').attr('data-kost');
@@ -570,8 +630,10 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
 
 
         $.ajax({
+            contentType: false,
+            processData: false,
             url: $(this).attr('action'),
-            data: $(this).serialize(),
+            data: new FormData(this),
             type: 'POST',
             dataType: 'JSON',
             success: function(d) {
@@ -696,6 +758,13 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                     $('#jumlah_pembayaran').val(data.jml_bayar)
                     $('#via_pembayaran').val(data.via_pembayaran)
                     $('#ket_pembayaran').val(data.ket)
+
+                    if (data.via_pembayaran != 'cash') {
+                        $('#form_bukti').removeClass('d-none')
+                    } else {
+                        $('#form_bukti').addClass('d-none')
+                    }
+                    $('#bukti').removeAttr('required')
 
                 }, 200);
             },
