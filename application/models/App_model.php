@@ -104,25 +104,12 @@ class App_model extends CI_Model
 
     public function resize_image($path, $width, $height)
     {
-        if ($width >= 1200) {
-            $new_width = $width / 3;
-        } else if ($width < 1200) {
-            $new_width = $width / 2;
-        }
-
-        if ($height >= 1200) {
-            $new_height = $height / 3;
-        } else if ($width < 1200) {
-            $new_height = $height / 2;
-        }
-
-
 
         $config['image_library'] = 'gd2';
         $config['source_image'] = $path;
-        $config['width']         = $new_width;
-        $config['height']       = $new_height;
-        $config['quality'] = '70%';
+        $config['width']         = $width;
+        $config['height']       = $height;
+        $config['quality'] = '90%';
         $config['create_thumb'] = false;
         $config['maintain_ratio'] = TRUE;
 
@@ -141,8 +128,8 @@ class App_model extends CI_Model
         $config['wm_text'] = $wm_text;
         $config['wm_type'] = 'text';
         $config['wm_font_path'] = '';
-        $config['wm_font_size'] = '50';
-        $config['wm_font_color'] = 'eef52a';
+        $config['wm_font_size'] = '15';
+        $config['wm_font_color'] = 'c93030';
         $config['wm_vrt_alignment'] = 'bottom';
         $config['wm_hor_alignment'] = 'left';
         $config['wm_padding'] = '0';
