@@ -311,24 +311,30 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                 ->where([
                     'pembayaran.via_pembayaran' => 'Cash',
                     'penghuni.id_kost' => $kost_id,
+                    'pembayaran.periode' => $periode
                 ])
                 ->get()->row()->jml;
             $jml_pengeluaran = $this->db->select('SUM(nominal) AS jml')
                 ->from('pengeluaran')
                 ->where([
                     'sumber_dana' => 'meta',
-                    'id_kost' => $kost_id
+                    'id_kost' => $kost_id,
+                    'month(tanggal)' => $month_periode,
+                    'year(tanggal)' => $year_periode
                 ])
                 ->get()->row()->jml;
 
             $jml_setoran = $this->db->select('SUM(nominal) AS jml')
                 ->from('setoran')
-                ->where('id_kost', $kost_id)
+                ->where([
+                    'id_kost' => $kost_id,
+                    'month(tanggal)' => $month_periode,
+                    'year(tanggal)' => $year_periode
+                ])
                 ->get()->row()->jml;
 
-            $jml_awal = $this->config->item('uang_awal');
 
-            $total = ($jml_pay_cash + $jml_awal) - ($jml_pengeluaran + $jml_setoran);
+            $total = $jml_pay_cash - ($jml_pengeluaran + $jml_setoran);
         ?>
             <tr class="text-light bg-primary">
                 <td>Sisa Uang di Meta</td>
