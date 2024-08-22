@@ -385,8 +385,9 @@ class Ajax extends CI_Controller
                     } else {
                         $params = [
                             'status' => true,
-                            'msg' => 'Pembayaran berhasil di tambahkan',
-                            'token' => $this->security->get_csrf_hash()
+                            'msg' => 'Bukti gagal di upload',
+                            'token' => $this->security->get_csrf_hash(),
+                            'type' => 'result'
                         ];
                         echo json_encode($params);
                         die;
@@ -454,8 +455,9 @@ class Ajax extends CI_Controller
                     } else {
                         $params = [
                             'status' => true,
-                            'msg' => 'Pembayaran berhasil di tambahkan',
-                            'token' => $this->security->get_csrf_hash()
+                            'msg' => 'Bukti gagal di upload',
+                            'token' => $this->security->get_csrf_hash(),
+                            'type' => 'result'
                         ];
                         echo json_encode($params);
                         die;
