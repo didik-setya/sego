@@ -571,7 +571,9 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
             })
         })
 
-        $('#tbl_pemasukan, #table_pengeluaran, #table_setoran').DataTable()
+        $('#tbl_pemasukan, #table_pengeluaran, #table_setoran').DataTable({
+            "iDisplayLength": 50,
+        })
     })
 
     function filter_data() {
