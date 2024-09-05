@@ -1644,8 +1644,6 @@ class Ajax extends CI_Controller
         $this_month = date('m');
         $this_year = date('Y');
 
-        $periode = $this_year . '-' . $this_month;
-
         $kost_id = $this->session->userdata('kost_id');
         $jml_kost = $this->db->get_where('kamar', ['id_kost' => $kost_id])->num_rows();
         $jml_penghuni = $this->db->get_where('penghuni', ['id_kost' => $kost_id, 'status' => 2])->num_rows();
@@ -1662,7 +1660,8 @@ class Ajax extends CI_Controller
             ->join('penghuni', 'pembayaran.id_penghuni = penghuni.id')
             ->where([
                 'penghuni.id_kost' => $kost_id,
-                'pembayaran.periode' => $periode
+                'month(pembayaran.tgl_bayar)' => $this_month,
+                'year(pembayaran.tgl_bayar)' => $this_year
             ])->get()->row();
 
 
