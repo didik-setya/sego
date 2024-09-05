@@ -197,6 +197,7 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                 <th>Tanggal</th>
                                 <th>Biaya</th>
                                 <th>Nominal</th>
+                                <th>Sumber Dana</th>
                                 <th>Ket</th>
                                 <th><i class="fa fa-cogs"></i></th>
                             </tr>
@@ -213,6 +214,7 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                                     <td><?= cek_tgl($dp->tanggal) ?></td>
                                     <td><?= $dp->biaya ?></td>
                                     <td><?= number_format($dp->nominal) ?></td>
+                                    <td><?= $dp->sumber_dana ?></td>
                                     <td><?= $dp->ket ?></td>
 
                                     <td>
@@ -300,6 +302,38 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
             <td>Laba (Rugi)</td>
             <td><?= number_format($laba_rugi) ?></td>
         </tr>
+
+        <?php if ($kost_id == 7) {
+            $jml_pay_cash = $this->db->select('SUM(jml_bayar) AS jml')
+                ->from('pembayaran')
+                ->join('penghuni', 'pembayaran.id_penghuni = penghuni.id')
+                ->where([
+                    'pembayaran.via_pembayaran' => 'Cash',
+                    'penghuni.id_kost' => $kost_id
+                ])
+                ->get()->row()->jml;
+            $jml_pengeluaran = $this->db->select('SUM(nominal) AS jml')
+                ->from('pengeluaran')
+                ->where([
+                    'sumber_dana' => 'meta',
+                    'id_kost' => $kost_id,
+                ])
+                ->get()->row()->jml;
+
+            $jml_setoran = $this->db->select('SUM(nominal) AS jml')
+                ->from('setoran')
+                ->where([
+                    'id_kost' => $kost_id,
+                ])
+                ->get()->row()->jml;
+            $uang_awal = $this->config->item('uang_awal');
+            $total = ($jml_pay_cash + $uang_awal) - ($jml_pengeluaran + $jml_setoran);
+        ?>
+            <tr class="text-light bg-primary">
+                <td>Sisa Uang di Meta</td>
+                <td id="jml_sisa"><?= number_format($total) ?></td>
+            </tr>
+        <?php } ?>
     </table>
 
 </div>
@@ -446,6 +480,17 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
                     <label><b>Ket</b></label>
                     <textarea name="ket" id="ket_pengeluaran" class="form-control"></textarea>
                 </div>
+                <?php if ($kost_id == 7) { ?>
+                    <div class="form-group">
+                        <label><b>Sumber Dana</b></label>
+                        <select name="sumber_dana" id="sumber_dana" required class="form-control">
+                            <option value="">--pilih--</option>
+                            <option value="ihsan">Pak Ihsan</option>
+                            <option value="meta">Meta</option>
+                        </select>
+                    </div>
+                <?php } ?>
+
 
             </div>
             <div class="modal-footer">
@@ -589,7 +634,7 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
         if (v != 'Cash') {
             if (act == 'add') {
                 $('#form_bukti').removeClass('d-none')
-                $('#bukti').attr('required', true)
+                $('#bukti').removeAttr('required')
             } else if (act == 'edit') {
                 $('#form_bukti').removeClass('d-none')
                 $('#bukti').removeAttr('required')

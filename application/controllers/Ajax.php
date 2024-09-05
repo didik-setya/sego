@@ -555,6 +555,11 @@ class Ajax extends CI_Controller
 
         switch ($act) {
             case 'add':
+                if ($kost_id == 7) {
+                    $sumber_dana = $this->input->post('sumber_dana');
+                } else {
+                    $sumber_dana = null;
+                }
 
 
                 $data = [
@@ -563,6 +568,7 @@ class Ajax extends CI_Controller
                     'nominal' => $post['nominal'],
                     'ket' => $post['ket'],
                     'id_kost' => $kost_id,
+                    'sumber_dana' => $sumber_dana
                 ];
                 $this->db->insert('pengeluaran', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -582,12 +588,18 @@ class Ajax extends CI_Controller
                 die;
                 break;
             case 'edit':
+                if ($kost_id == 7) {
+                    $sumber_dana = $this->input->post('sumber_dana');
+                } else {
+                    $sumber_dana = null;
+                }
 
                 $data = [
                     'tanggal' => $post['date'],
                     'biaya' => $post['biaya'],
                     'nominal' => $post['nominal'],
                     'ket' => $post['ket'],
+                    'sumber_dana' => $sumber_dana
                 ];
                 $this->db->where('id', $id)->update('pengeluaran', $data);
                 if ($this->db->affected_rows() > 0) {
@@ -1643,6 +1655,7 @@ class Ajax extends CI_Controller
         cek_ajax();
         $this_month = date('m');
         $this_year = date('Y');
+        $periode = date('Y-m');
 
         $kost_id = $this->session->userdata('kost_id');
         $jml_kost = $this->db->get_where('kamar', ['id_kost' => $kost_id])->num_rows();
@@ -1660,8 +1673,7 @@ class Ajax extends CI_Controller
             ->join('penghuni', 'pembayaran.id_penghuni = penghuni.id')
             ->where([
                 'penghuni.id_kost' => $kost_id,
-                'month(pembayaran.tgl_bayar)' => $this_month,
-                'year(pembayaran.tgl_bayar)' => $this_year
+                'pembayaran.periode' => $periode
             ])->get()->row();
 
 

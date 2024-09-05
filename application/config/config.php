@@ -6,7 +6,7 @@ $config['pembayaran'] = [
     'MANDIRI',
     'BCA'
 ];
-$config['uang_awal'] = 213300;
+$config['uang_awal'] = 0;
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
