@@ -10,6 +10,8 @@ if ($get_periode) {
     $periode = $show_date;
 }
 $create_date = date_create($periode);
+
+$m_periode = date_format($create_date, 'F');
 $month_periode = date_format($create_date, 'm');
 $year_periode = date_format($create_date, 'Y');
 
@@ -24,8 +26,8 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
     'id_kost' => $kost_id,
     'month(tanggal)' => $month_periode,
     'year(tanggal)' => $year_periode
-])->result()
-
+])->result();
+$laba_rugi_sd = $this->app->get_pemasukan_by_sd($month_periode, $year_periode);
 ?>
 
 <div class="container-fluid">
@@ -301,6 +303,11 @@ $data_setoran = $this->db->order_by('tanggal', 'DESC')->get_where('setoran', [
         <tr class="text-light bg-primary">
             <td>Laba (Rugi)</td>
             <td><?= number_format($laba_rugi) ?></td>
+        </tr>
+
+        <tr class="text-light bg-primary">
+            <td>Laba (Rugi) s/d <?= $m_periode ?></td>
+            <td><?= number_format($laba_rugi_sd) ?></td>
         </tr>
 
         <?php if ($kost_id == 7) {

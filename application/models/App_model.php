@@ -138,4 +138,30 @@ class App_model extends CI_Model
         $this->image_lib->initialize($config);
         $this->image_lib->watermark();
     }
+
+
+    public function get_pemasukan_by_sd($m_periode, $y_periode)
+    {
+        $kost_id = $this->session->userdata('kost_id');
+
+        $this->db->select('SUM(pembayaran.jml_bayar) AS total')
+            ->from('penghuni')
+            ->join('kamar', 'penghuni.id_kamar = kamar.id')
+            ->join('pembayaran', 'penghuni.id = pembayaran.id_penghuni')
+            ->where('penghuni.id_kost', $kost_id)
+            ->where("SUBSTRING(pembayaran.periode, 1, 4) = $y_periode")
+            ->where("SUBSTRING(pembayaran.periode, 6, 2) <= $m_periode");
+        $total_pemasukan = $this->db->get()->row()->total;
+
+
+        $this->db->select('SUM(nominal) AS jml')
+            ->from('pengeluaran')
+            ->where('id_kost', $kost_id)
+            ->where('year(tanggal)', $y_periode)
+            ->where('month(tanggal) <=', $m_periode);
+        $total_pengeluaran = $this->db->get()->row()->jml;
+
+        $data = $total_pemasukan - $total_pengeluaran;
+        return $data;
+    }
 }
